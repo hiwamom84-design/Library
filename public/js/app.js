@@ -115,7 +115,7 @@ function initEventListeners() {
   });
   const savedFont = localStorage.getItem('library_font') || 'pencil';
   document.documentElement.setAttribute('data-font', savedFont);
-  const savedTheme = localStorage.getItem('library_theme') || 'blue';
+  const savedTheme = localStorage.getItem('family_lib_theme_v2') || 'blue';
   document.documentElement.setAttribute('data-theme', savedTheme);
 
   document.getElementById('signin-btn')?.addEventListener('click', () => openModal('signin-modal'));
@@ -301,6 +301,8 @@ async function loadInitialData() {
     console.error('Failed to load categories:', err);
   }
 }
+
+function requireLogin(msg){if(state.user)return true;if(msg)showToast(msg,'info');openModal('signin-modal');return false;}
 
 function switchView(view) {
   state.currentView = view;
