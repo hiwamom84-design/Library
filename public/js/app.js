@@ -355,7 +355,7 @@ function updateUserNavUI() {
   } else {
     if (signInBtn) signInBtn.style.display = 'inline-flex';
     if (userMenu) userMenu.style.display = 'none';
-    if (adminNav) adminNav.style.display = 'none';
+    if (adminNav) adminNav.style.display = 'none'; const ma=document.getElementById('m-nav-admin'); if(ma) ma.style.display = 'none';
     if (inventoryNav) inventoryNav.style.display = 'none';
     if (racesNav) racesNav.style.display = 'none';
     if (favWrap) favWrap.style.display = 'none';
