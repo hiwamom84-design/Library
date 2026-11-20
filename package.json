@@ -1,0 +1,37 @@
+{
+  "name": "community-library-system",
+  "version": "1.0.0",
+  "description": "A complete, friendly, and secure bilingual (Kurdish Sorani & English) Community and Family Library Management System deployable on Railway with PostgreSQL.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "migrate": "node server/database/migrate.js",
+    "seed": "node server/database/seed.js",
+    "setup-admin": "node server/scripts/setup-admin.js",
+    "test": "node server/tests/run-tests.js"
+  },
+  "keywords": [
+    "library",
+    "kurdish-sorani",
+    "railway",
+    "postgresql",
+    "react",
+    "express",
+    "education"
+  ],
+  "author": "Community Library Project",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
+    "serverless-http": "^3.2.0"
+  }
+}

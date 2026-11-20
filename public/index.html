@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl" data-theme="blue">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>کتێبخانەی خێزان</title>
+  <link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+  <meta name="description" content="سیستەمی بەڕێوەبردنی کتێبخانەی خێزان بە زمانی کوردی سۆرانی • دروستکراوە لەلایەن نوح هیوا عومەر">
+  
+  <!-- Kurdish Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&family=Inter:wght@400;600;700&family=Lora:wght@400;600;700&family=Marhey:wght@400;500;600;700&family=Patrick+Hand&family=Quicksand:wght@500;600;700&family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .whatsapp-float-btn {
+      position: fixed;
+      bottom: 24px;
+      inset-inline-start: 24px;
+      background-color: #25D366;
+      color: #FFFFFF;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+      z-index: 1000;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .whatsapp-float-btn:hover {
+      background-color: #1EBE5D;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+      color: #fff;
+    }
+    .creator-tag {
+      color: #FBBF24;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body class="lang-ckb rtl">
+
+  <!-- ==================== SITE HEADER ==================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-wrapper" id="brand-link">
+        <img src="/assets/logo.jpg" alt="کتێبخانەی خێزان" class="brand-logo-img">
+        <div class="brand-text">
+          <p data-i18n="appSubtitle">دروستکراوە لەلایەن نوح هیوا عومەر</p>
+        </div>
+      </div>
+
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <button class="nav-item-btn active" id="nav-books-btn">
+              <span>📖</span> <span data-i18n="navBooks">کتێبەکان</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" id="nav-inventory-btn" style="display:none;">
+              <span data-i18n="navMyLoans">خواستنەکانم</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" id="nav-races-btn" style="display:none;">
+              <span>🏆</span> <span>پێشەنگەکان</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" id="nav-rules-btn">
+              <span>📋</span> <span data-i18n="navRules">یاساکانی خوێندنەوە</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" id="nav-admin-btn" style="display:none; color:var(--accent-amber);">
+              <span>⚙️</span> <span data-i18n="navAdmin">بەشی بەڕێوەبەر</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="lang-btn" id="btn-open-settings">⚙️ <span id="t-settings-btn">ڕێکخستنەکان</span></button>
+
+        <button class="btn btn-primary btn-sm" id="signin-btn">
+          <span></span> <span>چوونەژوورەوە</span>
+        </button>
+
+        <div class="user-menu" id="header-user-menu" style="display:none;">
+          <div class="user-badge" id="user-badge-btn">
+            <div class="user-avatar" id="user-badge-avatar">👤</div>
+            <div class="user-info-text">
+              <span class="user-info-name" id="user-badge-name">ئەندام</span>
+              <span class="user-info-grade" id="user-badge-grade">پۆلی ١</span>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" id="signout-btn" title="دەرچوون">
+            🚪 دەرچوون
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main style="flex:1;">
+
+    <!-- ==================== 1. CATALOG VIEW ==================== -->
+    <section class="view-section" id="view-catalog">
+      <div class="hero-banner">
+        <div class="container hero-content">
+          <span class="hero-badge">✨ ژینگەیەکی پەروەردەیی و دەوڵەمەند بۆ هەموو تەمەنەکان</span>
+          <h2 class="hero-title" data-i18n="heroTitle">بەخێربێن بۆ کتێبخانەی خێزان</h2>
+          <p class="hero-desc" data-i18n="heroDesc">
+            کتێب کلیلی کردنەوەی مێشک و دەروازەی بیرکردنەوەی قووڵە؛ زمانمان پاراو دەکات تا بە دروستی و جوانی بدوێین، ئاسۆی زانینمان فراوانتر دەکات و هەنگاو بە هەنگاو بەرەو ژیری و داهێنانمان دەبات.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.3);" onclick="window.app.switchView('rules')" data-i18n="heroRulesBtn">
+              ڕێبەری پۆلەکان
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" id="family-announcement-banner" style="display:none; margin-top:1rem;"><div style="background:#fef3c7; border:1px solid #fcd34d; color:#92400e; padding:0.75rem 1rem; border-radius:12px; font-weight:700;">📢 <span id="family-announcement-text"></span></div></div>
+      <div class="container" id="catalog-start">
+        <div class="catalog-toolbar">
+          <div class="search-box-row">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="catalog-search-input" class="search-input" placeholder="گەڕان بەپێی ناوی کتێب یان نووسەر..." data-i18n-placeholder="searchPlaceholder">
+            </div>
+          </div>
+
+          <div class="category-tabs" id="category-filter-tabs"></div>
+
+          <div class="toolbar-status-row">
+            <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+              <label class="toggle-label">
+                <input type="checkbox" id="filter-available-toggle">
+                <span data-i18n="filterOnlyAvailable">تەنها کتێبە بەردەستەکان</span>
+              </label>
+              <label class="toggle-label" id="filter-favorites-wrap" style="display:none;">
+                <input type="checkbox" id="filter-favorites-toggle">
+                <span>❤️ تەنها دڵخوازەکانم</span>
+              </label>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline btn-sm" id="btn-suggest-book" onclick="openSuggestModal()">💡 پێشنیازی کتێب</button>
+              <div id="catalog-results-count" style="font-weight:700;"></div>
+              <button type="button" class="btn btn-primary btn-sm" id="btn-catalog-add-book" style="display:none;" onclick="openModal('add-book-modal')">➕ زیادکردنی کتێب و وێنە</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="weekly-quota-banner" style="display:none; background:#dcfce7; border:1px solid #86efac; color:#166534; padding:0.75rem 1.1rem; border-radius:12px; margin-bottom:1.25rem; font-weight:700; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+          <span id="weekly-quota-text">✅ مافی خواستنی ئەم هەفتەیەت هەیە: دەتوانیت ١ کتێب هەڵبژێریت.</span>
+          <span style="font-size:0.85rem; opacity:0.85;">یاسا: هەفتانە ١ کتێب</span>
+        </div>
+
+        <div class="book-grid" id="books-catalog-grid"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. MY LOANS VIEW ==================== -->
+    <section class="view-section" id="view-inventory" style="display:none; padding: 2.5rem 0;">
+      <div class="container">
+        <div id="reading-badges-card" style="background:var(--bg-card,#fff); border:1px solid var(--border-color,#dbeafe); border-radius:14px; padding:1rem 1.25rem; margin-bottom:1.75rem; box-shadow:0 2px 10px rgba(0,0,0,0.04);">
+          <div style="font-weight:800; color:var(--primary,#1d4ed8); margin-bottom:0.5rem;">🏅 نیشانە و ئاستی خوێندنەوەم:</div>
+          <div style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.35rem 0.8rem; border-radius:999px; border:1px solid var(--border-color,#bfdbfe); background:var(--bg-subtle,#eff6ff); font-size:0.88rem; font-weight:700; color:var(--primary,#1d4ed8);">
+            📚 کۆی کتێبەکانم: <span id="my-total-books-count">0</span>
+          </div>
+        </div>
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="myInventoryTitle">کتێبە خوازراوەکانی ئێستام</h2>
+          <p class="section-subtitle" data-i18n="myInventoryDesc">ئەو کتێبانەی ئێستا لای تۆن بۆ خوێندنەوە.</p>
+        </div>
+        <div class="inventory-grid" id="my-active-loans-grid"></div>
+
+        <div class="section-header" style="margin-top: 3.5rem;">
+          <h2 class="section-title" data-i18n="myPastLoansTitle">مێژووی تەواوکراوی خواستنەکانم</h2>
+          <p class="section-subtitle" data-i18n="myPastLoansDesc">تۆماری هەمیشەیی ئەو کتێبانەی پێشتر گەڕاندووتنەتەوە.</p>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="fieldTitle">ناوی کتێب</th>
+                <th data-i18n="author">نووسەر</th>
+                <th data-i18n="copy">کۆد</th>
+                <th data-i18n="borrowedAtDate">ڕێکەوتی خواستن</th>
+                <th data-i18n="returnedAtDate">ڕێکەوتی گەڕاندنەوە</th>
+              </tr>
+            </thead>
+            <tbody id="my-past-loans-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 2B. RACES / LEADERBOARD VIEW ==================== -->
+    <section class="view-section" id="view-races" style="display:none; padding: 2.5rem 0;">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">🏆 پێشبڕکێکان و پێشەنگەکانی خوێندنەوە</h2>
+          <p class="section-subtitle">لە چەندین جۆری جیاوازی پێشبڕکێدا بەشداری بکە و پلەی یەکەم بەدەستبهێنە:</p>
+        </div>
+        <div class="category-tabs" id="race-type-tabs" style="margin-bottom:1.5rem;">
+          <button type="button" class="cat-tab active" onclick="setRaceTab('mostBooks', this)">🏆 زۆرترین کتێب</button>
+          <button type="button" class="cat-tab" onclick="setRaceTab('onTimeReaders', this)">✅ خوێنەری پابەند</button>
+          <button type="button" class="cat-tab" onclick="setRaceTab('diverseReaders', this)">📚 جۆراوجۆرترین خوێنەر</button>
+          <button type="button" class="cat-tab" onclick="setRaceTab('monthlyLeaders', this)">🔥 چالاکترین لەم مانگە</button>
+        </div>
+        <div id="leaderboard-container"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. RULES GUIDE VIEW ==================== -->
+    <section class="view-section" id="view-rules" style="display:none; padding: 2.5rem 0;">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="rulesTitle">یاساکانی خوێندنەوە بەپێی قۆناغی تەمەن و پۆل</h2>
+          <p class="section-subtitle">ئەم یاسایانە دەسەڵاتی خواستنی کتێب بەپێی قۆناغ و تەمەن ڕێکدەخەن:</p>
+        </div>
+        <div class="rules-matrix">
+          <div class="rule-box">
+            <h3 class="rule-grade-title">🌱 پۆلی ١–٣</h3>
+            <p><strong>دەسەڵات:</strong> تەنها دەتوانن کتێبەکانی پۆلی ١–٣ بخوازن.</p>
+          </div>
+          <div class="rule-box">
+            <h3 class="rule-grade-title">🌿 پۆلی ٤–٦</h3>
+            <p><strong>دەسەڵات:</strong> دەتوانن کتێبەکانی پۆلی ١–٣ و ٤–٦ بخوازن.</p>
+          </div>
+          <div class="rule-box">
+            <h3 class="rule-grade-title">📘 پۆلی ٧–٩</h3>
+            <p><strong>دەسەڵات:</strong> دەتوانن کتێبەکانی پۆلی ١–٣، ٤–٦ و ٧–٩ بخوازن.</p>
+          </div>
+          <div class="rule-box">
+            <h3 class="rule-grade-title">🎓 پۆلی ١٠–١٢</h3>
+            <p><strong>دەسەڵات:</strong> دەتوانن هەموو کتێبەکان بخوازن جگە لە سەروو پۆلی ١٢.</p>
+          </div>
+          <div class="rule-box" style="border-color:var(--cat-above-12);">
+            <h3 class="rule-title" style="color:var(--cat-above-12);">🏛️ سەروو پۆلی ١٢ (گەورەساڵان)</h3>
+            <p><strong>دەسەڵات:</strong> بێ بەربەست دەتوانن لە هەموو پۆلەکان کتێب بخوازن.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. ENHANCED ADMIN PORTAL ==================== -->
+    <section class="view-section" id="view-admin" style="display:none; padding: 2.5rem 0;">
+      <div class="container">
+        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+          <div>
+            <h2 class="section-title">بەشی تایبەتی بەڕێوەبەر</h2>
+            <p class="section-subtitle">زیادکردنی کتێب بە مۆبایل و کامێرا، سڕینەوەی هەمیشەیی، بینینی هەموو پڕۆفایلەکان، و ژماری خوێنەران</p>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-primary" onclick="openModal('add-book-modal')">
+              ➕ زیادکردنی کتێب
+            </button>
+            <button class="btn btn-outline" onclick="openModal('announcement-modal')">
+              📢 ئاگاداری
+            </button>
+          </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="admin-metrics-grid">
+          <div class="metric-card">
+            <span class="metric-card-title">کۆی کتێبەکان</span>
+            <span class="metric-card-value" id="stat-total-books">0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-card-title">کۆی نوسخەکان</span>
+            <span class="metric-card-value" id="stat-total-copies">0</span>
+          </div>
+          <div class="metric-card accent-green">
+            <span class="metric-card-title">نوسخە بەردەستەکان</span>
+            <span class="metric-card-value" id="stat-available-copies">0</span>
+          </div>
+          <div class="metric-card accent-amber">
+            <span class="metric-card-title">نوسخە خوازراوەکان</span>
+            <span class="metric-card-value" id="stat-borrowed-copies">0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-card-title">پڕۆفایلە تۆمارکراوەکان</span>
+            <span class="metric-card-value" id="stat-active-members">0</span>
+          </div>
+          <div class="metric-card accent-green">
+            <span class="metric-card-title">خواستنە کاراکان</span>
+            <span class="metric-card-value" id="stat-active-loans">0</span>
+          </div>
+        </div>
+
+        <div class="category-tabs" style="margin-bottom: 1.5rem;">
+          <button class="category-tab-btn admin-tab-btn active" data-admin-tab="books">📚 بەڕێوەبردنی کتێبەکان</button>
+          <button class="category-tab-btn admin-tab-btn" data-admin-tab="members">👥 هەموو پڕۆفایلەکان و دیاریکردنی ڕۆڵ</button>
+          <button class="category-tab-btn admin-tab-btn" data-admin-tab="loans">📋 تۆماری خواستنەکان</button>
+          <button class="category-tab-btn admin-tab-btn" data-admin-tab="suggestions">💡 داواکاری کتێبی نوێ (<span id="stat-suggestions-count">0</span>)</button>
+        </div>
+
+        <div id="admin-pane-books" class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ناوی کتێب</th>
+                <th>نووسەر</th>
+                <th>پۆلی خوێندنەوە</th>
+                <th>بەردەست</th>
+                <th>چەند کەس خوێندوویەتیەوە</th>
+                <th>کردارەکان</th>
+              </tr>
+            </thead>
+            <tbody id="admin-books-table-body"></tbody>
+          </table>
+        </div>
+
+        <div id="admin-pane-members" class="table-container" style="display:none;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ناوی بەکارهێنەر</th>
+                <th>ئیمەیڵ</th>
+                <th>پۆل</th>
+                <th>ڕۆڵ لە کتێبخانە</th>
+                <th>کۆی کتێبە خوێندراوەکان</th>
+                <th>کردار و گۆڕینی ڕۆڵ</th>
+              </tr>
+            </thead>
+            <tbody id="admin-members-table-body"></tbody>
+          </table>
+        </div>
+
+        <div id="admin-pane-suggestions" class="table-container" style="display:none;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ناوی کتێب</th>
+                <th>پێشنیازکەر</th>
+                <th>نووسەر / تێبینی</th>
+                <th>کردار</th>
+              </tr>
+            </thead>
+            <tbody id="admin-suggestions-table-body">
+              <tr><td colspan="4" style="text-align:center; padding:1.5rem;">هیچ داواکارییەک نییە.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="admin-pane-loans" class="table-container" style="display:none;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ناوی کتێب</th>
+                <th>نوسخە</th>
+                <th>ئەندام</th>
+                <th>ڕێکەوتی خواستن</th>
+                <th>کاتی گەڕاندنەوە</th>
+                <th>دۆخ</th>
+                <th>کردار</th>
+              </tr>
+            </thead>
+            <tbody id="admin-loans-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button type="button" class="mobile-nav-item active" onclick="window.app.switchView('catalog')"><span>📖</span><span>کتێبەکان</span></button>
+    <button type="button" class="mobile-nav-item" onclick="window.app.switchView('inventory')"><span></span><span>خواستن</span></button>
+    <button type="button" class="mobile-nav-item" onclick="window.app.switchView('rules')"><span>📋</span><span>یاسا</span></button>
+    <button type="button" class="mobile-nav-item" id="m-nav-admin" style="display:none;" onclick="window.app.switchView('admin')"><span>⚙️</span><span>بەڕێوەبەر</span></button>
+  </nav>
+
+  <!-- ==================== FLOATING WHATSAPP BUTTON (+964 750 170 1136) ==================== -->
+  <a href="https://wa.me/9647501701136?text=سڵاو،%20دەربارەی%20کتێبخانەی%20خێزانی%20پەیوەندیتان%20پێوە%20دەکەم" target="_blank" rel="noopener noreferrer" class="whatsapp-float-btn" id="whatsapp-contact-btn">
+    <span>💬</span>
+    <span>پەیوەندیمان پێوە بکە لە واتسئەپ</span>
+  </a>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Sign In / Admin Login Modal (Password: 1234554321) -->
+  <div class="modal-overlay" id="signin-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-signin-title">چوونەژوورەوەی ئەندامان یان بەڕێوەبەر</h3>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <form id="signin-form">
+        <div class="modal-body">
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+            تکایە ئیمەیڵ و تێپەڕەوشەی هەژمارەکەت بنووسە بۆ چوونەژوورەوە.
+          </p>
+          <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+            <button type="button" class="btn btn-navy btn-sm" id="btn-signin-mode-member" style="flex:1;" onclick="window.setSigninMode('member')">خوێنەر / ئەندام</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-signin-mode-admin" style="flex:1;" onclick="window.setSigninMode('admin')">بەڕێوەبەر</button>
+          </div>
+          <div class="form-group" id="signin-member-group">
+            <label class="form-label">ناوی خۆت هەڵبژێرە *</label>
+            <select id="signin-member-select" class="form-control">
+              <option value="">-- ناو هەڵبژێرە --</option>
+            </select>
+          </div>
+          <div class="form-group" id="signin-email-group" style="display:none;">
+            <label class="form-label">ناوی بەڕێوەبەر *</label>
+            <input type="text" id="signin-email" class="form-control" placeholder="ناوی خۆت بنووسە">
+          </div>
+          <div class="form-group">
+            <label class="form-label">تێپەڕەوشە *</label>
+            <input type="password" id="signin-password" class="form-control" required placeholder="تێپەڕەوشەی خۆت بنووسە">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-trigger">داخستن</button>
+          <button type="submit" class="btn btn-primary" id="signin-submit-btn">چوونە ژوورەوە</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Book Details Modal -->
+  <div class="modal-overlay" id="book-details-modal">
+    <div class="modal-card" style="max-width:650px;">
+      <div class="modal-header">
+        <h3 id="modal-book-title">ناوی کتێب</h3>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; gap:1.25rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+          <img id="modal-book-cover" src="" alt="Book Cover" style="width:120px; height:160px; object-fit:cover; border-radius:var(--radius-sm); display:none;">
+          <div style="flex:1;">
+            <p style="margin-bottom:0.35rem;"><strong>نووسەر:</strong> <span id="modal-book-author"></span></p>
+            <p style="margin-bottom:0.35rem;"><strong>پۆلی خوێندنەوە:</strong> <span id="modal-book-category"></span></p>
+            <p style="margin-bottom:0.35rem;"><strong>چەند کەس خوێندوویەتیەوە:</strong> <span id="modal-book-total-loans" style="font-weight:700; color:var(--forest-green);">0</span> کەس</p>
+            <p style="margin-top:0.5rem; font-size:0.88rem; color:var(--text-secondary); line-height:1.6;" id="modal-book-desc"></p>
+          </div>
+        </div>
+
+        <div id="modal-admin-history-section" style="display:none; margin-top:1.25rem; border-top:1px solid var(--border-color); padding-top:1rem;">
+          <h4 style="font-size:0.95rem; font-weight:700; color:var(--primary-navy); margin-bottom:0.5rem;">کێ ئەم کتێبەی خوێندووەتەوە:</h4>
+          <div class="table-responsive">
+            <table class="data-table" style="font-size:0.82rem;">
+              <thead><tr><th>خوێنەر</th><th>نوسخە</th><th>خواستن</th><th>گەڕاندنەوە</th><th>دۆخ</th></tr></thead>
+              <tbody id="modal-book-history-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline modal-close-trigger">داخستن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile-Friendly Add Book Modal (Camera or Gallery) -->
+  <div class="modal-overlay" id="add-book-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>📖 زیادکردنی کتێبی نوێ (بۆ مۆبایل و کامێرا)</h3>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <form id="admin-add-book-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">ناوی کتێب *</label>
+            <input type="text" id="new-book-title" class="form-control" required placeholder="بۆ نموونە: شازادە بچکۆلەکە">
+          </div>
+          <div class="form-group">
+            <label class="form-label">نووسەر *</label>
+            <input type="text" id="new-book-author" class="form-control" required placeholder="ناوی نووسەر">
+          </div>
+          <div class="form-group">
+            <label class="form-label">پۆلی خوێندنەوە *</label>
+            <select id="new-book-category" class="form-control" required>
+              <option value="1">پۆلی ١–٣ (سەرەتایی خواروو)</option>
+              <option value="2">پۆلی ٤–٦ (سەرەتایی بەرز)</option>
+              <option value="3">پۆلی ٧–٩ (ناوەندی)</option>
+              <option value="4">پۆلی ١٠–١٢ (ئامادەیی)</option>
+              <option value="5">سەروو پۆلی ١٢ (گەورەساڵان)</option>
+            </select>
+          </div>
+
+          <!-- Camera and Gallery Photo Options -->
+          <div class="photo-picker-box" style="border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 1rem; text-align: center; background: var(--bg-subtle); margin-bottom: 1rem;">
+            <label class="form-label" style="margin-bottom:0.35rem;">وێنەی بەرگی کتێب</label>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.6rem;">
+              وێنە بگرە بە کامێرا یان لە گەلەری هەڵیبژێرە:
+            </p>
+
+            <input type="file" id="input-camera-file" accept="image/*" capture="environment" style="display:none;">
+            <input type="file" id="input-gallery-file" accept="image/*" style="display:none;">
+
+            <div style="display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-navy btn-sm" id="btn-trigger-camera">
+                📸 گرتنی وێنە بە کامێرا
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-trigger-gallery">
+                🖼️ هەڵبژاردن لە گەلەری
+              </button>
+            </div>
+
+            <div class="photo-preview-container" id="photo-preview-box" style="margin-top: 0.75rem; display: none; align-items: center; gap: 0.85rem; background: #fff; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+              <img id="img-preview-thumb" style="width: 60px; height: 80px; object-fit: cover; border-radius: var(--radius-sm);" alt="Preview">
+              <div style="flex:1; text-align:start; font-size:0.82rem;">
+                <div style="font-weight:700; color:var(--forest-green);">وێنە هەڵبژێردرا ✓</div>
+                <button type="button" class="btn btn-danger btn-sm" style="margin-top:0.35rem; padding:0.2rem 0.5rem; font-size:0.75rem;" id="btn-remove-photo">سڕینەوەی وێنە</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">کورتەی بابەت</label>
+            <textarea id="new-book-desc" class="form-control" rows="3" placeholder="کورتەیەک دەربارەی کتێبەکە..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-trigger">داخستن</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-book-submit">💾 پاشەکەوتکردن</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Member Modal -->
+  <div class="modal-overlay" id="add-member-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>👤 دروستکردنی هەژمار و دیاریکردنی ڕۆڵ</h3>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <form id="admin-add-member-form">
+        <div class="modal-body">
+          <div class="form-group"><label class="form-label">ناوی تەواو *</label><input type="text" id="new-member-name" class="form-control" required placeholder="ناوی کەسەکە"></div>
+          <div class="form-group"><label class="form-label">ئیمەیڵ *</label><input type="email" id="new-member-email" class="form-control" required placeholder="user@family.krd"></div>
+          <div class="form-group"><label class="form-label">تێپەڕەوشە *</label><input type="password" id="new-member-pass" class="form-control" required minlength="6" placeholder="لایەنی کەم ٦ پیت"></div>
+          <div class="form-group">
+            <label class="form-label">پۆلی خوێندن *</label>
+            <select id="new-member-grade" class="form-control" required>
+              <option value="1">پۆلی ١</option><option value="2">پۆلی ٢</option><option value="3">پۆلی ٣</option>
+              <option value="4">پۆلی ٤</option><option value="5">پۆلی ٥</option><option value="6">پۆلی ٦</option>
+              <option value="7">پۆلی ٧</option><option value="8">پۆلی ٨</option><option value="9">پۆلی ٩</option>
+              <option value="10">پۆلی ١٠</option><option value="11">پۆلی ١١</option><option value="12">پۆلی ١٢</option>
+              <option value="13">سەروو پۆلی ١٢ (گەورەساڵان)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">ڕۆڵ *</label>
+            <select id="new-member-role" class="form-control">
+              <option value="member">ئەندامی ئاسایی (خوێنەر)</option>
+              <option value="admin">بەڕێوەبەری سەرەکی</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-trigger">داخستن</button>
+          <button type="submit" class="btn btn-navy">تۆمارکردن</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Member Name & Grade Modal (Admin) -->
+  <div class="modal-overlay" id="edit-member-modal">
+    <div class="modal-content" style="max-width:460px;">
+      <div class="modal-header">
+        <h3>✏️ دەستکاریکردنی ناو و پۆلی ئەندام</h3>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <form id="admin-edit-member-form">
+        <div class="modal-body">
+          <input type="hidden" id="edit-member-id">
+          <div class="form-group">
+            <label class="form-label">ناوی نوێ *</label>
+            <input type="text" id="edit-member-name" class="form-control" required placeholder="ناوی تەواو بنووسە">
+          </div>
+          <div class="form-group">
+            <label class="form-label">پۆلی خوێندن *</label>
+            <select id="edit-member-grade" class="form-control">
+              <option value="1">پۆلی ١</option><option value="2">پۆلی ٢</option><option value="3">پۆلی ٣</option>
+              <option value="4">پۆلی ٤</option><option value="5">پۆلی ٥</option><option value="6">پۆلی ٦</option>
+              <option value="7">پۆلی ٧</option><option value="8">پۆلی ٨</option><option value="9">پۆلی ٩</option>
+              <option value="10">پۆلی ١٠</option><option value="11">پۆلی ١١</option><option value="12">پۆلی ١٢</option>
+              <option value="13">سەروو پۆلی ١٢ (گەورەساڵان)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-trigger">داخستن</button>
+          <button type="submit" class="btn btn-primary">💾 پاشەکەوتکردن</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Settings Modal -->
+  <div class="modal-overlay" id="modal-settings">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <h3>⚙️ ڕێکخستنەکان</h3>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">🌐 زمانی ماڵپەڕ</div>
+        <div style="display:flex; gap:0.6rem; margin-bottom:1.5rem;">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-set-lang-ckb" style="flex:1;">کوردی سۆرانی</button>
+          <button type="button" class="btn btn-outline btn-sm" id="btn-set-lang-en" style="flex:1;">ئینگلیزی</button>
+        </div>
+        <div style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">🎨 ڕەنگی باکگراوند</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:0.6rem;">
+          <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="light">کرێمی</button>
+          <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="pink" style="border-color:#EC4899; color:#BE185D;">پەمەیی</button>
+          <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="blue" style="border-color:#3B82F6; color:#1D4ED8;">شین</button>
+          <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="purple" style="border-color:#8B5CF6; color:#6D28D9;">مۆر</button>
+          <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="mint" style="border-color:#10B981; color:#047857;">سەوز</button>
+          <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="peach" style="border-color:#F59E0B; color:#B45309;">پرتەقاڵی</button>
+          <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="dark">شەو</button>
+        </div>
+        <div style="font-size:0.9rem; font-weight:700; margin:1.25rem 0 0.6rem;">✍️ شێوازی فۆنت</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:0.6rem;">
+          <button type="button" class="btn btn-outline btn-sm font-option-btn" data-set-font="pencil" style="font-family:'Marhey','Patrick Hand',cursive;">✏️ دەستنووس</button>
+          <button type="button" class="btn btn-outline btn-sm font-option-btn" data-set-font="modern" style="font-family:'Vazirmatn','Inter',sans-serif;">✨ مۆدێرن</button>
+          <button type="button" class="btn btn-outline btn-sm font-option-btn" data-set-font="classic" style="font-family:'Amiri','Lora',serif;">📖 کلاسیکی</button>
+          <button type="button" class="btn btn-outline btn-sm font-option-btn" data-set-font="soft" style="font-family:'Cairo','Quicksand',sans-serif;">🌿 نەرم و سادە</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline modal-close-trigger">داخستن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Footer with Creator Credit (نوح هیوا عومەر) & Corrected WhatsApp (+964 750 170 1136) -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong style="font-size:1.05rem;">کتێبخانەی خێزان</strong>
+        <p style="opacity:0.9; font-size:0.85rem; margin-top:0.35rem;">
+          دروستکراوە لەلایەن: <span class="creator-tag">نوح هیوا عومەر</span>
+        </p>
+      </div>
+      <div>
+        <a href="https://wa.me/9647501701136?text=سڵاو،%20دەربارەی%20کتێبخانە%20پەیوەندیتان%20پێوە%20دەکەم" target="_blank" rel="noopener noreferrer" style="color:#25D366; font-weight:700; display:inline-flex; align-items:center; gap:0.4rem; text-decoration:none;">
+          <span>پەیوەندیمان پێوە بکە لە واتسئەپ 💬</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+
+  <!-- Suggest Book Modal -->
+  <div class="modal-overlay" id="suggest-book-modal">
+    <div class="modal-content" style="max-width:460px;">
+      <div class="modal-header">
+        <h3>💡 پێشنیازی کتێبی نوێ</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('suggest-book-modal')">✕</button>
+      </div>
+      <form id="suggest-book-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">ناوی کتێب *</label>
+            <input type="text" id="suggest-book-title" class="form-control" required placeholder="ناوی ئەو کتێبەی پێشنیازی دەکەیت">
+          </div>
+          <div class="form-group">
+            <label class="form-label">نووسەر / تێبینی</label>
+            <input type="text" id="suggest-book-notes" class="form-control" placeholder="ئەگەر نووسەر یان تێبینیت هەیە">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-trigger" onclick="closeModal('suggest-book-modal')">داخستن</button>
+          <button type="submit" class="btn btn-primary">ناردنی پێشنیاز</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Announcement Modal -->
+  <div class="modal-overlay" id="announcement-modal">
+    <div class="modal-content" style="max-width:460px;">
+      <div class="modal-header">
+        <h3>📢 ئاگاداری بۆ خێزان</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('announcement-modal')">✕</button>
+      </div>
+      <form id="announcement-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">دەقی ئاگاداری (بەتاڵی بهێڵە بۆ سڕینەوە)</label>
+            <textarea id="announcement-input" class="form-control" rows="3" placeholder="نموونە: ئەم هەفتەیە کتێبی نوێ زیادکرا!"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-trigger" onclick="closeModal('announcement-modal')">داخستن</button>
+          <button type="submit" class="btn btn-primary">بڵاوکردنەوە</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
