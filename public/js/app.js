@@ -302,7 +302,12 @@ async function loadInitialData() {
   }
 }
 
-function requireLogin(msg){if(state.user)return true;if(msg)showToast(msg,'info');openModal('signin-modal');return false;}
+function requireLogin(msg) {
+  if (state.user) return true;
+  if (msg) showToast(msg, 'info');
+  openModal('signin-modal');
+  return false;
+}
 
 function switchView(view) {
   state.currentView = view;
@@ -355,7 +360,10 @@ function updateUserNavUI() {
   } else {
     if (signInBtn) signInBtn.style.display = 'inline-flex';
     if (userMenu) userMenu.style.display = 'none';
-    if (adminNav) adminNav.style.display = 'none'; const ma=document.getElementById('m-nav-admin'); if(ma) ma.style.display = 'none';
+    if (adminNav) adminNav.style.display = 'none';
+    const mAdmin = document.getElementById('m-nav-admin'); if (mAdmin) mAdmin.style.display = 'none';
+    const mInv = document.getElementById('m-nav-inventory'); if (mInv) mInv.style.display = 'none';
+    const mRaces = document.getElementById('m-nav-races'); if (mRaces) mRaces.style.display = 'none';
     if (inventoryNav) inventoryNav.style.display = 'none';
     if (racesNav) racesNav.style.display = 'none';
     if (favWrap) favWrap.style.display = 'none';
@@ -686,7 +694,11 @@ function initAdminTabs() {
       document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      ['books','members','loans','suggestions'].forEach(t=>{const p=document.getElementById('admin-pane-'+t);if(p)p.style.display=t===tab?'block':'none';});if(tab==='suggestions')renderAdminSuggestions();
+      ['books', 'members', 'loans', 'suggestions'].forEach(t => {
+        const p = document.getElementById(`admin-pane-${t}`);
+        if (p) p.style.display = (t === tab) ? 'block' : 'none';
+      });
+      if (tab === 'suggestions') renderAdminSuggestions();
 
       loadAdminTabContent(tab);
     });

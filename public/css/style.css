@@ -1245,10 +1245,49 @@ textarea.form-control {
 .mobile-nav-item.active { color: var(--forest-green); background: var(--bg-subtle); }
 
 @media (max-width: 768px) {
-  body { padding-bottom: 74px; }
-  .site-header .nav-links { display: none; }
-  .mobile-bottom-nav { display: flex; }
-  .whatsapp-float-btn { bottom: 82px !important; inset-inline-start: 14px !important; font-size: 0.82rem !important; padding: 0.6rem 1rem !important; }
+  body { padding-bottom: 92px; }
+  .site-header .nav-links {
+    display: flex;
+    order: 4;
+    width: 100%;
+    justify-content: center;
+    gap: 0.6rem;
+    padding-top: 0.25rem;
+  }
+  .site-header #nav-inventory-btn,
+  .site-header #nav-races-btn,
+  .site-header #nav-rules-btn,
+  .site-header #btn-open-settings {
+    display: none !important;
+  }
+  .mobile-nav-settings {
+    font-size: 0.74rem !important;
+    min-width: 58px !important;
+    padding: 0.35rem 0.45rem !important;
+  }
+  .mobile-nav-settings span:first-child {
+    font-size: 1.05rem !important;
+  }
+  .site-header #nav-books-btn,
+  .site-header #nav-admin-btn {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.95rem;
+  }
+  .mobile-bottom-nav {
+    display: flex;
+    padding: 0.55rem 0.5rem env(safe-area-inset-bottom, 0.55rem);
+  }
+  .mobile-nav-item {
+    font-size: 0.92rem;
+    padding: 0.5rem 0.9rem;
+    gap: 0.25rem;
+    min-width: 84px;
+  }
+  .mobile-nav-item span:first-child {
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+  .whatsapp-float-btn { bottom: 96px !important; inset-inline-start: 14px !important; font-size: 0.82rem !important; padding: 0.6rem 1rem !important; }
   .form-control, .search-input, select { font-size: 16px !important; }
   .btn { min-height: 44px; }
   .book-grid { grid-template-columns: 1fr !important; }
