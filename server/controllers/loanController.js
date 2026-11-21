@@ -355,6 +355,8 @@ async function getMyLoans(req, res) {
         b.title,
         b.author,
         b.cover_url,
+        b.page_count,
+        b.book_type,
         gc.name_ckb as category_name_ckb,
         gc.name_en as category_name_en,
         bc.copy_number,
@@ -381,6 +383,8 @@ async function getMyLoans(req, res) {
         b.title,
         b.author,
         b.cover_url,
+        b.page_count,
+        b.book_type,
         gc.name_ckb as category_name_ckb,
         gc.name_en as category_name_en,
         bc.copy_number

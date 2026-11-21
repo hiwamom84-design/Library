@@ -1317,3 +1317,25 @@ textarea.form-control {
 [data-font="classic"] { --font-sorani: 'Amiri', serif; --font-en: 'Lora', serif; }
 [data-font="soft"] { --font-sorani: 'Cairo', sans-serif; --font-en: 'Quicksand', sans-serif; }
 button, input, select, textarea { font-family: inherit; }
+
+
+/* Mobile Screen Stability & Zero Horizontal Wobble */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+.table-container, .table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 768px) {
+  .container { padding-left: 0.85rem !important; padding-right: 0.85rem !important; max-width: 100% !important; overflow-x: hidden; }
+  .category-tabs, .cat-tabs { flex-wrap: wrap !important; justify-content: flex-start !important; gap: 0.45rem !important; }
+  .category-tab-btn, .cat-tab-btn, .cat-tab { font-size: 0.82rem !important; padding: 0.42rem 0.75rem !important; white-space: nowrap; }
+  .data-table { font-size: 0.82rem; }
+  .data-table th, .data-table td { padding: 0.55rem 0.6rem; white-space: nowrap; }
+  .whatsapp-float-btn span:last-child { display: none; }
+  .whatsapp-float-btn { width: 46px !important; height: 46px !important; padding: 0 !important; border-radius: 50% !important; justify-content: center !important; font-size: 1.25rem !important; bottom: 88px !important; }
+}

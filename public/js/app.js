@@ -1,3 +1,15 @@
+const BOOK_TYPE_LABELS = {
+  roman: '📖 ڕۆمان',
+  chirok: '📘 چیرۆک',
+  shi3r: '🪶 شیعر',
+  wta: '💬 وتە و پەند',
+  zanist: '🔬 زانست و مێژوو',
+  ayini: '🕌 ئایینی',
+  mindal: '🧸 منداڵان',
+  other: '✨ گشتی'
+};
+function formatBookType(code) { return BOOK_TYPE_LABELS[code] || BOOK_TYPE_LABELS.other; }
+
 /**
  * Community Library Management System - Frontend Controller
  * Direct PostgreSQL persistence, camera & gallery photo support, permanent deletion, and role management.
@@ -136,11 +148,22 @@ function initEventListeners() {
     });
   }
 
+  document.querySelectorAll('.book-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.book-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.bookType = btn.getAttribute('data-book-type') || 'all';
+      loadCatalog();
+    });
+  });
+
   document.getElementById('filter-available-toggle')?.addEventListener('change', (e) => {
     if (!state.user) { e.target.checked = false; requireLogin('تکایە سەرەتا بچۆ ژوورەوە'); return; }
     state.onlyAvailable = e.target.checked;
     loadCatalog();
   });
+
+  document.getElementById('catalog-sort-select')?.addEventListener('change', (e) => { state.sortBy = e.target.value; loadCatalog(); });
 
   document.getElementById('filter-favorites-toggle')?.addEventListener('change', (e) => {
     if (!state.user) { e.target.checked = false; requireLogin('تکایە سەرەتا بچۆ ژوورەوە'); return; }
@@ -415,10 +438,15 @@ async function loadCatalog() {
     const res = await window.api.getBooks({
       q: state.searchQuery,
       category: state.selectedCategory,
-      available_only: state.onlyAvailable
+      book_type: state.bookType || 'all',
+      available_only: state.onlyAvailable,
+      favorites_only: state.favoritesOnly
     });
 
-    state.books = res.books || [];
+    let fetchedBooks = res.books || [];
+    if (state.sortBy === 'popular') fetchedBooks.sort((a, b) => (b.total_loans_count || 0) - (a.total_loans_count || 0));
+    else if (state.sortBy === 'rating') fetchedBooks.sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0));
+    state.books = fetchedBooks;
 
     if (countEl) {
       countEl.textContent = `${state.books.length} کتێب لە بنکەدراوەیە`;
@@ -493,9 +521,15 @@ function renderBookCards(container, books) {
           ${coverHtml}
         </div>
         <div class="book-card-body">
-          <span class="book-category-tag ${catBadgeClass}">
-            ${escapeHtml(categoryName)}
-          </span>
+          <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.35rem;">
+            <span class="book-category-tag ${catBadgeClass}">
+              ${escapeHtml(categoryName)}
+            </span>
+            <span class="book-category-tag" style="background:var(--bg-subtle); color:var(--primary-navy);">
+              ${formatBookType(book.book_type)}
+            </span>
+            ${book.page_count ? `<span class="book-category-tag" style="background:#f3f4f6; color:#374151;">📄 ${book.page_count} لاپەڕە</span>` : ''}
+          </div>
           <h3 class="book-title">${escapeHtml(book.title)}</h3>
           <p class="book-author">${escapeHtml(book.author)}</p>
 
@@ -562,9 +596,38 @@ async function loadMyInventory() {
   if (activeContainer) activeContainer.innerHTML = `<p>چاوەڕوانبە...</p>`;
 
   try {
-    const res = await window.api.getMyLoans();
+    const [res, favRes] = await Promise.all([
+      window.api.getMyLoans(),
+      window.api.getBooks({ favorites_only: 'true' }).catch(() => ({ books: [] }))
+    ]);
     state.myActiveLoans = res.currentInventory || [];
     state.myPastLoans = res.pastLoans || [];
+    const myFavs = favRes.books || [];
+
+    const totalReadBooks = state.myPastLoans.length;
+    const totalReadPages = state.myPastLoans.reduce((sum, l) => sum + (parseInt(l.page_count, 10) || 0), 0);
+    const elReadB = document.getElementById('stat-my-read-books'); if (elReadB) elReadB.textContent = totalReadBooks;
+    const elReadP = document.getElementById('stat-my-read-pages'); if (elReadP) elReadP.textContent = totalReadPages;
+    const elActB = document.getElementById('stat-my-active-books'); if (elActB) elActB.textContent = state.myActiveLoans.length;
+    const elFavB = document.getElementById('stat-my-fav-books'); if (elFavB) elFavB.textContent = myFavs.length;
+
+    const favGrid = document.getElementById('my-favorites-grid');
+    if (favGrid) {
+      if (myFavs.length === 0) {
+        favGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><p>هێشتا هیچ کتێبێکت نەخستووەتە لیستی دڵخوازەکان.</p></div>`;
+      } else {
+        favGrid.innerHTML = myFavs.map(b => `
+          <div class="book-card" style="padding:1rem; cursor:pointer;" onclick="openBookDetailsModal(${b.id})">
+            <div style="font-weight:800; font-size:1.05rem; margin-bottom:0.25rem;">${escapeHtml(b.title)}</div>
+            <div style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:0.5rem;">${escapeHtml(b.author)}</div>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap; font-size:0.78rem;">
+              <span class="book-category-tag">${formatBookType(b.book_type)}</span>
+              ${b.page_count ? `<span class="book-category-tag">📄 ${b.page_count} لاپەڕە</span>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
 
     if (activeContainer) {
       if (state.myActiveLoans.length === 0) {
@@ -622,7 +685,7 @@ async function openBookDetailsModal(bookId) {
 
     document.getElementById('modal-book-title').textContent = book.title;
     document.getElementById('modal-book-author').textContent = book.author;
-    document.getElementById('modal-book-category').textContent = book.category_name_ckb;
+    document.getElementById('modal-book-category').textContent = `${book.category_name_ckb} • ${formatBookType(book.book_type)}${book.page_count ? ' • 📄 ' + book.page_count + ' لاپەڕە' : ''}`;
     document.getElementById('modal-book-desc').textContent = book.description || 'هیچ کورتەیەک دابین نەکراوە.';
     document.getElementById('modal-book-total-loans').textContent = book.total_loans_count || 0;
 
@@ -864,6 +927,8 @@ document.getElementById('admin-add-book-form')?.addEventListener('submit', async
   const author = document.getElementById('new-book-author').value.trim();
   const categoryId = document.getElementById('new-book-category').value;
   const desc = document.getElementById('new-book-desc').value.trim();
+  const bookType = document.getElementById('new-book-type')?.value || 'other';
+  const pageCount = document.getElementById('new-book-pages')?.value || null;
   const submitBtn = document.getElementById('btn-save-book-submit');
 
   try {
@@ -1033,7 +1098,7 @@ function renderLeaderboardRaces() {
   let unit = 'کتێب';
   if (currentRaceTab === 'mostBooks') { list = races.mostBooks || []; unit = 'کتێب'; }
   else if (currentRaceTab === 'onTimeReaders') { list = races.fastestReaders || []; unit = 'کتێبی گەڕێندراوە'; }
-  else if (currentRaceTab === 'diverseReaders') { list = races.mostBooks || []; unit = 'کتێب'; }
+  else if (currentRaceTab === 'diverseReaders') { list = races.diverseReaders || races.mostBooks || []; unit = 'جۆری جیاواز'; }
   else if (currentRaceTab === 'monthlyLeaders') { list = races.monthlyLeaders || []; unit = 'کتێبی ئەم مانگە'; }
 
   if (!list || list.length === 0) {
@@ -1041,7 +1106,7 @@ function renderLeaderboardRaces() {
     return;
   }
   container.innerHTML = list.map((u, idx) => {
-    const score = u.books_read ?? u.completed_books ?? u.monthly_books ?? u.reviews_count ?? 0;
+    const score = currentRaceTab === 'diverseReaders' ? (u.diverse_types ?? u.books_read ?? 0) : currentRaceTab === 'onTimeReaders' ? (u.completed_books ?? 0) : currentRaceTab === 'monthlyLeaders' ? (u.monthly_books ?? 0) : (u.books_read ?? 0);
     return `
       <div class="leader-card">
         <div style="display:flex; align-items:center; gap:1rem;">

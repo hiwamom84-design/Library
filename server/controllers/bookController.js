@@ -9,7 +9,7 @@ const { evaluateBorrowPermission, formatGradeLabel } = require('../utils/grade-r
  * Get all books with search, filters, ratings, favorites, and user-specific borrow permissions
  */
 async function getBooks(req, res) {
-  const { q, category, available_only, favorites_only, include_archived } = req.query;
+  const { q, category, book_type, available_only, favorites_only, include_archived } = req.query;
 
   try {
     let whereClauses = [];
@@ -33,6 +33,12 @@ async function getBooks(req, res) {
       idx++;
     }
 
+    if (book_type && book_type.trim() && book_type.trim() !== 'all') {
+      whereClauses.push(`b.book_type = $${idx}`);
+      params.push(book_type.trim());
+      idx++;
+    }
+
     const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
     const booksQuery = `
@@ -43,6 +49,8 @@ async function getBooks(req, res) {
         b.isbn,
         b.description,
         b.cover_url,
+        b.page_count,
+        b.book_type,
         b.grade_category_id,
         b.is_archived,
         b.created_at,
@@ -301,28 +309,44 @@ async function getLeaderboard(req, res) {
         u.grade_level,
         u.photo_url,
         COUNT(l.id)::int as total_loans,
-        COUNT(l.id) FILTER (WHERE l.returned_at IS NOT NULL)::int as completed_books
+        COUNT(l.id) FILTER (WHERE l.returned_at IS NOT NULL)::int as completed_books,
+        COUNT(l.id) FILTER (WHERE l.borrowed_at >= DATE_TRUNC('month', CURRENT_DATE))::int as monthly_books,
+        COUNT(DISTINCT COALESCE(NULLIF(b.book_type, ''), 'other'))::int as diverse_types,
+        COALESCE(SUM(COALESCE(b.page_count, 0)), 0)::int as total_pages_read
       FROM users u
       JOIN loans l ON u.id = l.user_id
+      JOIN books b ON l.book_id = b.id
       WHERE u.is_active = true
       GROUP BY u.id
       HAVING COUNT(l.id) > 0
-      ORDER BY completed_books DESC, total_loans DESC
-      LIMIT 10;
+      ORDER BY total_loans DESC, completed_books DESC
+      LIMIT 15;
     `);
 
-    const leaders = resBoard.rows.map((row, idx) => ({
+    const rows = resBoard.rows.map((row, idx) => ({
       rank: idx + 1,
       id: row.id,
       fullName: row.full_name,
+      full_name: row.full_name,
       gradeLevel: row.grade_level,
+      grade_level: row.grade_level,
       gradeLabel: formatGradeLabel(row.grade_level),
       photoUrl: row.photo_url,
       totalLoans: row.total_loans,
-      completedBooks: row.completed_books
+      books_read: row.total_loans,
+      completedBooks: row.completed_books,
+      completed_books: row.completed_books,
+      monthly_books: row.monthly_books,
+      diverse_types: row.diverse_types,
+      total_pages_read: row.total_pages_read
     }));
 
-    return res.json({ leaders });
+    const mostBooks = [...rows].sort((a, b) => b.books_read - a.books_read || b.total_pages_read - a.total_pages_read);
+    const fastestReaders = [...rows].sort((a, b) => b.completed_books - a.completed_books || b.books_read - a.books_read);
+    const diverseReaders = [...rows].sort((a, b) => b.diverse_types - a.diverse_types || b.books_read - a.books_read);
+    const monthlyLeaders = [...rows].sort((a, b) => b.monthly_books - a.monthly_books || b.books_read - a.books_read);
+
+    return res.json({ leaders: mostBooks, mostBooks, fastestReaders, diverseReaders, monthlyLeaders });
   } catch (err) {
     console.error('❌ [Leaderboard Error]:', err.message);
     return res.status(500).json({ error: 'هەڵە لە هێنانی ڕیزبەندی خوێنەران', errorEn: 'Error loading leaderboard.' });
@@ -330,7 +354,7 @@ async function getLeaderboard(req, res) {
 }
 
 async function createBook(req, res) {
-  const { title, author, gradeCategoryId, categoryCode, coverUrl, description, copiesCount } = req.body;
+  const { title, author, gradeCategoryId, categoryCode, coverUrl, description, copiesCount, pageCount, page_count, bookType, book_type } = req.body;
 
   if (!title || !author) {
     return res.status(400).json({ error: 'تکایە ناوی کتێب و نووسەر دیاری بکە', errorEn: 'Title and author are required.' });
@@ -351,11 +375,13 @@ async function createBook(req, res) {
       targetCatId = defaultCat.rows[0].id;
     }
 
+    const parsedPages = parseInt(pageCount || page_count, 10) || null;
+    const cleanType = (bookType || book_type || 'other').trim();
     const bookRes = await client.query(
-      `INSERT INTO books (title, author, cover_url, description, grade_category_id)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, title, author, cover_url, description, grade_category_id, created_at;`,
-      [title.trim(), author.trim(), coverUrl ? coverUrl.trim() : null, description ? description.trim() : null, targetCatId]
+      `INSERT INTO books (title, author, cover_url, description, grade_category_id, page_count, book_type)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, title, author, cover_url, description, grade_category_id, page_count, book_type, created_at;`,
+      [title.trim(), author.trim(), coverUrl ? coverUrl.trim() : null, description ? description.trim() : null, targetCatId, parsedPages, cleanType]
     );
 
     const book = bookRes.rows[0];

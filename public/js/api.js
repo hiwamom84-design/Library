@@ -104,6 +104,7 @@ class ApiClient {
     const query = new URLSearchParams();
     if (params.q) query.append('q', params.q);
     if (params.category) query.append('category', params.category);
+    if (params.book_type && params.book_type !== 'all') query.append('book_type', params.book_type);
     if (params.available_only) query.append('available_only', 'true');
     if (params.favorites_only) query.append('favorites_only', 'true');
     if (params.include_archived) query.append('include_archived', 'true');
