@@ -125,8 +125,8 @@
           <div>
             <span style="display:inline-block; background:rgba(255,255,255,0.16); padding:0.3rem 0.85rem; border-radius:999px; font-size:0.85rem; font-weight:700; margin-bottom:0.75rem;" data-i18n="homeBadge">🏛️ کتێبخانەی خێزان</span>
             <h1 style="font-size:2rem; font-weight:800; margin:0 0 0.75rem;" data-i18n="homeTitle">بەخێربێن بۆ ماڵی کتێب و زانست</h1>
-            <p style="font-size:1rem; line-height:1.75; opacity:0.95; margin:0 0 1.25rem;" data-i18n="homeNote">
-              ئەم ماڵپەڕە شوێنێکی هاوبەشە بۆ ئەندامانی خێزانەکەمان تا بە ئاسانی کتێبەکان ببینن، بخوازن، دڵخوازەکانیان کۆبکەنەوە، و لە پێشبڕکێی خوێندنەوەدا بەشداری بکەن.
+            <p style="font-size:0.98rem; line-height:1.6; opacity:0.95; margin:0 0 1.25rem;" data-i18n="homeNote">
+              کتێبخانەی هاوبەشی خێزانەکەمان بۆ خوێندنەوە، دڵخوازەکان، و پێشبڕکێ.
             </p>
             <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
               <button type="button" class="btn btn-primary" style="background:#fff; color:#1e3a8a; font-weight:800;" onclick="window.app.switchView('catalog')" data-i18n="homeBtnBooks">📖 بینینی کتێبەکان</button>
@@ -153,15 +153,15 @@
             <span class="home-quick-title" data-i18n="qcJoinTitle">ببە ئەندام</span>
             <span class="home-quick-desc" data-i18n="qcJoinDesc">ناردنی داواکاری ئەندامبوون بۆ جاری یەکەم</span>
           </button>
-          <button type="button" class="home-quick-card" onclick="if(requireLogin('تکایە سەرەتا بچۆ ژوورەوە')) window.app.switchView('inventory')">
-            <span class="home-quick-icon">❤️</span>
-            <span class="home-quick-title" data-i18n="qcFavTitle">دڵخواز و مێژووم</span>
-            <span class="home-quick-desc" data-i18n="qcFavDesc">بینینی کتێبە دڵخوازەکان، لاپەڕە خوێندراوەکان و مێژوو</span>
-          </button>
           <button type="button" class="home-quick-card" onclick="if(requireLogin('تکایە سەرەتا بچۆ ژوورەوە')) window.app.switchView('races')">
             <span class="home-quick-icon">🏆</span>
             <span class="home-quick-title" data-i18n="qcRacesTitle">پێشەنگەکان</span>
             <span class="home-quick-desc" data-i18n="qcRacesDesc">بینینی ڕیزبەندی خوێنەرە چالاکەکانی خێزان</span>
+          </button>
+          <button type="button" class="home-quick-card" onclick="window.app.switchView('rules')">
+            <span class="home-quick-icon">📋</span>
+            <span class="home-quick-title" data-i18n="navRules">ڕێنمایی</span>
+            <span class="home-quick-desc" data-i18n="qcGuideDesc">یاسا و ڕێنماییەکانی خواستن و ئاستی پۆلەکان</span>
           </button>
           <button type="button" class="home-quick-card" onclick="document.getElementById('btn-open-settings')?.click()">
             <span class="home-quick-icon">⚙️</span>

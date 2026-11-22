@@ -1268,7 +1268,11 @@ textarea.form-control {
   .mobile-nav-settings span:first-child {
     font-size: 1.05rem !important;
   }
-  .site-header #nav-books-btn,
+  .site-header #nav-books-btn { display: none !important; }
+  .mobile-bottom-nav { display: none !important; }
+  body { padding-bottom: 1.5rem !important; }
+  .whatsapp-float-btn { bottom: 18px !important; }
+  .site-header #nav-home-btn,
   .site-header #nav-admin-btn {
     font-size: 0.95rem;
     padding: 0.5rem 0.95rem;
