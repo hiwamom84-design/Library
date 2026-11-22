@@ -1507,3 +1507,35 @@ html, body {
   font-size: 1.45rem !important;
   line-height: 1;
 }
+
+/* Smooth, Customizable, Glassmorphic Home Page */
+#view-home {
+  min-height: calc(100vh - 150px);
+  background: radial-gradient(circle at 85% 15%, var(--bg-subtle) 0%, transparent 55%),
+              radial-gradient(circle at 15% 85%, var(--bg-subtle) 0%, transparent 55%),
+              var(--bg-main);
+  transition: background 0.45s ease;
+}
+.home-quick-grid {
+  gap: 1.15rem;
+  padding: 0.5rem 0 2rem;
+}
+.home-quick-card {
+  background: color-mix(in srgb, var(--bg-surface) 84%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.35rem 1.4rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s ease;
+}
+.home-quick-card:hover {
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.11);
+  border-color: var(--forest-green);
+}
+.home-quick-card:active {
+  transform: scale(0.98);
+}
+/* home-smooth-bg */
