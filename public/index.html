@@ -93,6 +93,7 @@
       </nav>
 
       <div class="header-actions">
+        <button type="button" class="lang-btn" id="btn-toggle-music" title="میوزیک و دەنگ" onclick="window.toggleLibraryMusic()">🔇</button>
         <button class="lang-btn" id="btn-open-settings">⚙️ <span id="t-settings-btn">ڕێکخستنەکان</span></button>
 
         <button class="btn btn-primary btn-sm" id="signin-btn">
@@ -745,6 +746,11 @@
           <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="mint" style="border-color:#10B981; color:#047857;">سەوز</button>
           <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="peach" style="border-color:#F59E0B; color:#B45309;">پرتەقاڵی</button>
           <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="dark">شەو</button>
+        </div>
+        <div style="font-size:0.9rem; font-weight:700; margin:1.25rem 0 0.6rem;" data-i18n="settingsSound">🎵 دەنگ و میوزیکی ئارام</div>
+        <div style="display:flex; gap:0.6rem; margin-bottom:0.5rem;">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-settings-sound" style="flex:1;" onclick="window.toggleUiSounds()">🔊 دەنگی کلیک: کارایە</button>
+          <button type="button" class="btn btn-outline btn-sm" id="btn-settings-music" style="flex:1;" onclick="window.toggleLibraryMusic()">🎵 میوزیکی ئارام: ناچالاک</button>
         </div>
         <div style="font-size:0.9rem; font-weight:700; margin:1.25rem 0 0.6rem;" data-i18n="settingsFont">✍️ شێوازی فۆنت</div>
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:0.6rem;">

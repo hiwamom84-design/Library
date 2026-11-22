@@ -1371,3 +1371,117 @@ document.getElementById('admin-edit-book-form')?.addEventListener('submit', asyn
     btn.disabled = false;
   }
 });
+
+
+// ==================== WEB AUDIO UI SOUNDS & CALM LIBRARY MUSIC ====================
+(function() {
+  let audioCtx = null;
+  let uiSoundsEnabled = localStorage.getItem('family_lib_sounds') !== 'off';
+  let musicPlaying = false;
+  let musicTimer = null;
+
+  function getCtx() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+    return audioCtx;
+  }
+
+  function playTone(freq, dur = 0.09, type = 'sine', vol = 0.06, delay = 0) {
+    if (!uiSoundsEnabled) return;
+    const ctx = getCtx();
+    if (!ctx) return;
+    const t = ctx.currentTime + delay;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(vol, t + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+  }
+
+  window.playClickSound = () => playTone(520, 0.07, 'sine', 0.045);
+  window.playSuccessSound = () => {
+    playTone(523.25, 0.12, 'triangle', 0.055, 0);
+    playTone(659.25, 0.14, 'triangle', 0.055, 0.07);
+    playTone(783.99, 0.22, 'triangle', 0.06, 0.14);
+  };
+
+  // Gentle soft click on interactive buttons & cards
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('button, .home-quick-card, .book-card')) {
+      window.playClickSound();
+    }
+  });
+
+  // Calm ambient chord loop
+  const chords = [
+    [261.63, 329.63, 392.00], // Cmaj
+    [220.00, 261.63, 329.63], // Am
+    [174.61, 220.00, 261.63], // Fmaj
+    [196.00, 246.94, 293.66]  // Gmaj
+  ];
+  let chordIdx = 0;
+
+  function playAmbientChord() {
+    if (!musicPlaying) return;
+    const ctx = getCtx();
+    if (!ctx) return;
+    const notes = chords[chordIdx % chords.length];
+    chordIdx++;
+    notes.forEach((freq, i) => {
+      const t = ctx.currentTime + i * 0.14;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.linearRampToValueAtTime(0.025, t + 0.6);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 3.1);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 3.2);
+    });
+  }
+
+  function updateSoundButtons() {
+    const mBtn = document.getElementById('btn-toggle-music');
+    if (mBtn) mBtn.textContent = musicPlaying ? '🎵' : '🔇';
+    const sBtn = document.getElementById('btn-settings-sound');
+    if (sBtn) sBtn.textContent = uiSoundsEnabled ? '🔊 دەنگی کلیک: کارایە' : '🔇 دەنگی کلیک: ناچالاک';
+    const msBtn = document.getElementById('btn-settings-music');
+    if (msBtn) msBtn.textContent = musicPlaying ? '🎵 میوزیکی ئارام: کارایە' : '🎵 میوزیکی ئارام: ناچالاک';
+  }
+
+  window.toggleUiSounds = function() {
+    uiSoundsEnabled = !uiSoundsEnabled;
+    localStorage.setItem('family_lib_sounds', uiSoundsEnabled ? 'on' : 'off');
+    if (uiSoundsEnabled) window.playSuccessSound();
+    updateSoundButtons();
+  };
+
+  window.toggleLibraryMusic = function() {
+    musicPlaying = !musicPlaying;
+    if (musicPlaying) {
+      getCtx();
+      playAmbientChord();
+      musicTimer = setInterval(playAmbientChord, 3200);
+      showToast('میوزیکی ئارام کارا کرا 🎵', 'info');
+    } else {
+      if (musicTimer) clearInterval(musicTimer);
+      musicTimer = null;
+      showToast('میوزیک وەستێنرا 🔇', 'info');
+    }
+    updateSoundButtons();
+  };
+
+  document.addEventListener('DOMContentLoaded', updateSoundButtons);
+})();
