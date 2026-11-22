@@ -1495,7 +1495,7 @@ html, body {
 }
 @media (max-width: 768px) {
   .home-hero-grid { grid-template-columns: 1fr; padding: 1.35rem; text-align: center; }
-  .site-header #nav-home-btn { display: none !important; }
+  .site-header #nav-home-btn { display: inline-flex !important; }
 }
 
 .home-quick-head {
