@@ -121,51 +121,25 @@
     <!-- ==================== 0. HOME VIEW ==================== -->
     <section class="view-section" id="view-home" style="padding: 2rem 0;">
       <div class="container">
-        <div class="home-hero-grid">
-          <div>
-            <span style="display:inline-block; background:rgba(255,255,255,0.16); padding:0.3rem 0.85rem; border-radius:999px; font-size:0.85rem; font-weight:700; margin-bottom:0.75rem;" data-i18n="homeBadge">🏛️ کتێبخانەی خێزان</span>
-            <h1 style="font-size:2rem; font-weight:800; margin:0 0 0.75rem;" data-i18n="homeTitle">بەخێربێن بۆ ماڵی کتێب و زانست</h1>
-            <p style="font-size:0.98rem; line-height:1.6; opacity:0.95; margin:0 0 1.25rem;" data-i18n="homeNote">
-              کتێبخانەی هاوبەشی خێزانەکەمان بۆ خوێندنەوە، دڵخوازەکان، و پێشبڕکێ.
-            </p>
-            <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-              <button type="button" class="btn btn-primary" style="background:#fff; color:#1e3a8a; font-weight:800;" onclick="window.app.switchView('catalog')" data-i18n="homeBtnBooks">📖 بینینی کتێبەکان</button>
-              <button type="button" class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.55); font-weight:800;" onclick="openModal('signin-modal'); if(window.setSigninMode) window.setSigninMode('request');" data-i18n="homeBtnBecomeMember">✨ ببە ئەندام</button>
-            </div>
-          </div>
-          <div style="display:flex; align-items:center; justify-content:center;">
-            <div style="background:rgba(255,255,255,0.12); border:2px solid rgba(255,255,255,0.28); border-radius:20px; padding:1.75rem 2rem; text-align:center; backdrop-filter:blur(6px); max-width:260px; width:100%;">
-              <img src="/assets/logo.jpg" alt="کتێبخانەی خێزان" style="width:110px; height:110px; object-fit:contain; border-radius:14px; background:#fff; padding:6px; margin:0 auto 0.85rem; display:block; box-shadow:0 8px 20px rgba(0,0,0,0.22);">
-              <div style="font-weight:800; font-size:1.15rem; color:#fde68a;" data-i18n="book3dTitle">کتێبخانەی خێزان</div>
-              <div style="font-size:0.84rem; opacity:0.9; margin-top:0.35rem;" data-i18n="book2dSub">خوێندنەوە کلیلە بۆ داهاتوویەکی ڕووناک</div>
-            </div>
-          </div>
-        </div>
-
         <div class="home-quick-grid">
           <button type="button" class="home-quick-card" onclick="window.app.switchView('catalog')">
-            <span class="home-quick-icon">📖</span>
-            <span class="home-quick-title" data-i18n="qcBooksTitle">کتێبەکان</span>
+            <div class="home-quick-head"><span class="home-quick-icon">📖</span><span class="home-quick-title" data-i18n="qcBooksTitle">کتێبەکان</span></div>
             <span class="home-quick-desc" data-i18n="qcBooksDesc">گەڕان و فلتەرکردنی هەموو کتێبەکان بەپێی پۆل و جۆر</span>
           </button>
           <button type="button" class="home-quick-card" onclick="openModal('signin-modal'); if(window.setSigninMode) window.setSigninMode('request');">
-            <span class="home-quick-icon">✨</span>
-            <span class="home-quick-title" data-i18n="qcJoinTitle">ببە ئەندام</span>
+            <div class="home-quick-head"><span class="home-quick-icon">✨</span><span class="home-quick-title" data-i18n="qcJoinTitle">ببە ئەندام</span></div>
             <span class="home-quick-desc" data-i18n="qcJoinDesc">ناردنی داواکاری ئەندامبوون بۆ جاری یەکەم</span>
           </button>
           <button type="button" class="home-quick-card" onclick="if(requireLogin('تکایە سەرەتا بچۆ ژوورەوە')) window.app.switchView('races')">
-            <span class="home-quick-icon">🏆</span>
-            <span class="home-quick-title" data-i18n="qcRacesTitle">پێشەنگەکان</span>
+            <div class="home-quick-head"><span class="home-quick-icon">🏆</span><span class="home-quick-title" data-i18n="qcRacesTitle">پێشەنگەکان</span></div>
             <span class="home-quick-desc" data-i18n="qcRacesDesc">بینینی ڕیزبەندی خوێنەرە چالاکەکانی خێزان</span>
           </button>
           <button type="button" class="home-quick-card" onclick="window.app.switchView('rules')">
-            <span class="home-quick-icon">📋</span>
-            <span class="home-quick-title" data-i18n="navRules">ڕێنمایی</span>
+            <div class="home-quick-head"><span class="home-quick-icon">📋</span><span class="home-quick-title" data-i18n="navRules">ڕێنمایی</span></div>
             <span class="home-quick-desc" data-i18n="qcGuideDesc">یاسا و ڕێنماییەکانی خواستن و ئاستی پۆلەکان</span>
           </button>
           <button type="button" class="home-quick-card" onclick="document.getElementById('btn-open-settings')?.click()">
-            <span class="home-quick-icon">⚙️</span>
-            <span class="home-quick-title" data-i18n="qcSettingsTitle">ڕێکخستنەکان</span>
+            <div class="home-quick-head"><span class="home-quick-icon">⚙️</span><span class="home-quick-title" data-i18n="qcSettingsTitle">ڕێکخستنەکان</span></div>
             <span class="home-quick-desc" data-i18n="qcSettingsDesc">گۆڕینی ڕەنگی باکگراوند، فۆنت و زمان</span>
           </button>
         </div>
