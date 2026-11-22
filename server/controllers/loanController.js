@@ -249,7 +249,7 @@ async function returnBook(req, res) {
 
     // 1. Lock loan record for update
     const loanRes = await client.query(
-      `SELECT l.id, l.copy_id, l.book_id, l.user_id, l.returned_at, l.status,
+      `SELECT l.id, l.copy_id, l.book_id, l.user_id, l.returned_at, l.notes, l.status,
               b.title as book_title, bc.copy_number, u.full_name as member_name
        FROM loans l
        JOIN books b ON l.book_id = b.id
@@ -377,7 +377,7 @@ async function getMyLoans(req, res) {
         l.id as loan_id,
         l.borrowed_at,
         l.due_at,
-        l.returned_at,
+        l.returned_at, l.notes,
         l.status,
         b.id as book_id,
         b.title,
@@ -456,7 +456,7 @@ async function getAllLoans(req, res) {
         l.id as loan_id,
         l.borrowed_at,
         l.due_at,
-        l.returned_at,
+        l.returned_at, l.notes,
         l.status,
         l.notes,
         b.id as book_id,
@@ -521,7 +521,7 @@ async function getMemberLoanHistory(req, res) {
         l.id as loan_id,
         l.borrowed_at,
         l.due_at,
-        l.returned_at,
+        l.returned_at, l.notes,
         l.status,
         l.notes,
         b.id as book_id,

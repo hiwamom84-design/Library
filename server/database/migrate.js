@@ -9,11 +9,11 @@ const path = require('path');
 const { getClient, close } = require('./db');
 
 const INITIAL_CATEGORIES = [
-  { code: 'G1_3', name_ckb: 'پۆلی ١–٣', name_en: 'Grades 1–3', min: 1, max: 3, sort: 1 },
-  { code: 'G4_6', name_ckb: 'پۆلی ٤–٦', name_en: 'Grades 4–6', min: 4, max: 6, sort: 2 },
-  { code: 'G7_9', name_ckb: 'پۆلی ٧–٩', name_en: 'Grades 7–9', min: 7, max: 9, sort: 3 },
-  { code: 'G10_12', name_ckb: 'پۆلی ١٠–١٢', name_en: 'Grades 10–12', min: 10, max: 12, sort: 4 },
-  { code: 'ABOVE_12', name_ckb: 'سەروو پۆلی ١٢', name_en: 'Above grade 12', min: 13, max: 99, sort: 5 }
+  { code: 'G1_3', name_ckb: 'ئاستی پۆلی 1-3', name_en: 'Level of Grade 1-3', min: 1, max: 3, sort: 1 },
+  { code: 'G4_6', name_ckb: 'ئاستی پۆلی 4-6', name_en: 'Level of Grade 4-6', min: 4, max: 6, sort: 2 },
+  { code: 'G7_9', name_ckb: 'ئاستی پۆلی 7-9', name_en: 'Level of Grade 7-9', min: 7, max: 9, sort: 3 },
+  { code: 'G10_12', name_ckb: 'ئاستی پۆلی 10-12', name_en: 'Level of Grade 10-12', min: 10, max: 12, sort: 4 },
+  { code: 'ABOVE_12', name_ckb: 'ئاستی سەروو پۆلی 12', name_en: 'Level Above Grade 12', min: 13, max: 99, sort: 5 }
 ];
 
 async function runMigrations() {

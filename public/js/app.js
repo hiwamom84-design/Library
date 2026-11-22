@@ -625,8 +625,12 @@ async function loadMyInventory() {
     state.myPastLoans = res.pastLoans || [];
     const myFavs = favRes.books || [];
 
-    const totalReadBooks = state.myPastLoans.length;
-    const totalReadPages = state.myPastLoans.reduce((sum, l) => sum + (parseInt(l.page_count, 10) || 0), 0);
+    const pfName = document.getElementById('my-profile-fullname');
+    const pfMeta = document.getElementById('my-profile-meta');
+    if (pfName && state.user) pfName.textContent = '👤 ' + state.user.fullName;
+    if (pfMeta && state.user) pfMeta.textContent = `${state.user.gradeLabel?.ckb || ''} • ${state.user.role === 'admin' ? 'بەڕێوەبەر' : 'خوێنەر'}`;
+    const totalReadBooks = state.myPastLoans.filter(l => l.notes !== 'not_read').length;
+    const totalReadPages = state.myPastLoans.filter(l => l.notes !== 'not_read').reduce((sum, l) => sum + (parseInt(l.page_count, 10) || 0), 0);
     const elReadB = document.getElementById('stat-my-read-books'); if (elReadB) elReadB.textContent = totalReadBooks;
     const elReadP = document.getElementById('stat-my-read-pages'); if (elReadP) elReadP.textContent = totalReadPages;
     const elActB = document.getElementById('stat-my-active-books'); if (elActB) elActB.textContent = state.myActiveLoans.length;
@@ -1263,3 +1267,16 @@ function init3DBook() {
   stage.addEventListener('pointerup', () => { dragging = false; });
   stage.addEventListener('pointercancel', () => { dragging = false; });
 }
+
+
+window.handleReturnWithReadCheck = async function(loanId, title) {
+  const didRead = confirm(`پێش گەڕاندنەوەی کتێبی «${title}»: \n\nئایا ئەم کتێبەت خوێندەوە؟\n• OK = بەڵێ، خوێندمەوە (بچێتە ناو ئامارەکانم)\n• Cancel = نەخێر، هێشتا نەمخوێندووەتەوە`);
+  try {
+    await window.api.request('/loans/return', { method: 'POST', body: JSON.stringify({ loanId, didRead }) });
+    showToast(didRead ? 'کتێبەکە گەڕێندرایەوە و وەک خوێندراو تۆمارکرا ✅' : 'کتێبەکە گەڕێندرایەوە (وەک نەخوێندراو)', 'success');
+    loadMyInventory();
+    loadCatalog();
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+};
