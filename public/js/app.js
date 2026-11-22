@@ -797,13 +797,13 @@ async function loadAdminTabContent(tab) {
   if (tab === 'books') {
     const tableBody = document.getElementById('admin-books-table-body');
     if (!tableBody) return;
-    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">چاوەڕوانبە...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">چاوەڕوانبە...</td></tr>`;
 
     const res = await window.api.getBooks({ include_archived: 'true' });
     const books = res.books || [];
 
     if (books.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem;">هیچ کتێبێک تۆمار نەکراوە. دوگمەی «زیادکردنی کتێب» دابگرە بۆ زیادکردنی کتێب بە وێنەی کامێرا یان گەلەری.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem;">هیچ کتێبێک تۆمار نەکراوە. دوگمەی «زیادکردنی کتێب» دابگرە بۆ زیادکردنی کتێب بە وێنەی کامێرا یان گەلەری.</td></tr>`;
       return;
     }
 
@@ -812,6 +812,7 @@ async function loadAdminTabContent(tab) {
         <td><strong>${escapeHtml(b.title)}</strong></td>
         <td>${escapeHtml(b.author)}</td>
         <td><span class="book-category-tag cat-badge-${b.category_code}">${escapeHtml(b.category_name_ckb)}</span></td>
+        <td><span class="book-category-tag">${formatBookType(b.book_type)}</span></td>
         <td>${b.available_copies} / ${b.total_copies}</td>
         <td><strong>${b.total_loans_count || 0} کەس</strong></td>
         <td>
@@ -823,7 +824,7 @@ async function loadAdminTabContent(tab) {
   } else if (tab === 'members') {
     const tableBody = document.getElementById('admin-members-table-body');
     if (!tableBody) return;
-    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">چاوەڕوانبە...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">چاوەڕوانبە...</td></tr>`;
 
     const res = await window.api.getMembers();
     state.adminMembers = res.members || [];
