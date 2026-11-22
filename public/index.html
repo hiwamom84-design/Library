@@ -53,7 +53,7 @@
       <div class="brand-wrapper" id="brand-link">
         <img src="/assets/logo.jpg" alt="کتێبخانەی خێزان" class="brand-logo-img">
         <div class="brand-text">
-          <p class="brand-advice-line">✨ کتێب باشترین هاوڕێیە؛ هەموو لاپەڕەیەک دەرگایەکی نوێ بۆ زانین دەکاتەوە.</p><p style="font-size:0.75rem; opacity:0.8; margin:0;">دروستکراوە لەلایەن نوح هیوا عومەر</p>
+          <p class="brand-advice-line" data-i18n="brandAdvice">✨ کتێب باشترین هاوڕێیە؛ هەموو لاپەڕەیەک دەرگایەکی نوێ بۆ زانین دەکاتەوە.</p><p style="font-size:0.75rem; opacity:0.8; margin:0;" data-i18n="createdByLine">دروستکراوە لەلایەن نوح هیوا عومەر</p>
         </div>
       </div>
 
@@ -61,7 +61,7 @@
         <ul class="nav-links">
           <li>
             <button class="nav-item-btn active" id="nav-home-btn">
-              <span>🏠</span> <span>سەرەتا</span>
+              <span>🏠</span> <span data-i18n="navHome">سەرەتا</span>
             </button>
           </li>
           <li>
@@ -123,56 +123,60 @@
       <div class="container">
         <div class="home-hero-grid">
           <div>
-            <span style="display:inline-block; background:rgba(255,255,255,0.16); padding:0.3rem 0.85rem; border-radius:999px; font-size:0.85rem; font-weight:700; margin-bottom:0.75rem;">🏛️ کتێبخانەی خێزان</span>
-            <h1 style="font-size:2rem; font-weight:800; margin:0 0 0.75rem;">بەخێربێن بۆ ماڵی کتێب و زانست</h1>
-            <p style="font-size:1rem; line-height:1.75; opacity:0.95; margin:0 0 1.25rem;">
+            <span style="display:inline-block; background:rgba(255,255,255,0.16); padding:0.3rem 0.85rem; border-radius:999px; font-size:0.85rem; font-weight:700; margin-bottom:0.75rem;" data-i18n="homeBadge">🏛️ کتێبخانەی خێزان</span>
+            <h1 style="font-size:2rem; font-weight:800; margin:0 0 0.75rem;" data-i18n="homeTitle">بەخێربێن بۆ ماڵی کتێب و زانست</h1>
+            <p style="font-size:1rem; line-height:1.75; opacity:0.95; margin:0 0 1.25rem;" data-i18n="homeNote">
               ئەم ماڵپەڕە شوێنێکی هاوبەشە بۆ ئەندامانی خێزانەکەمان تا بە ئاسانی کتێبەکان ببینن، بخوازن، دڵخوازەکانیان کۆبکەنەوە، و لە پێشبڕکێی خوێندنەوەدا بەشداری بکەن.
             </p>
             <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-              <button type="button" class="btn btn-primary" style="background:#fff; color:#1e3a8a; font-weight:800;" onclick="window.app.switchView('catalog')">📖 بینینی کتێبەکان</button>
-              <button type="button" class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.45);" onclick="openModal('signin-modal')">🔐 چوونەژوورەوە / ئەندامبوون</button>
+              <button type="button" class="btn btn-primary" style="background:#fff; color:#1e3a8a; font-weight:800;" onclick="window.app.switchView('catalog')" data-i18n="homeBtnBooks">📖 بینینی کتێبەکان</button>
+              <button type="button" class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.55); font-weight:800;" onclick="openModal('signin-modal'); if(window.setSigninMode) window.setSigninMode('request');" data-i18n="homeBtnBecomeMember">✨ ببە ئەندام</button>
             </div>
           </div>
-          <div class="book3d-stage" id="book3d-stage" title="بۆ سوڕاندن ڕایبکێشە">
+          <div class="book3d-stage" id="book3d-stage" title="Drag to rotate">
             <div class="book3d" id="book3d-el">
               <div class="book3d-face book3d-front">
-                <div style="font-size:2rem; margin-bottom:0.4rem;">📖</div>
-                <div style="font-weight:800; font-size:1.05rem;">کتێبخانەی خێزان</div>
-                <div style="font-size:0.75rem; opacity:0.8; margin-top:0.4rem;">ڕابکێشە بۆ سوڕاندن ↻</div>
+                <div class="book3d-front-inner">
+                  <div style="font-size:2.35rem; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">📖</div>
+                  <div style="font-weight:800; font-size:1.12rem; color:#fde68a;" data-i18n="book3dTitle">کتێبخانەی خێزان</div>
+                  <div style="width:46px; height:2px; background:rgba(251,191,36,0.7); border-radius:2px;"></div>
+                  <div style="font-size:0.76rem; opacity:0.88;" data-i18n="book3dDrag">ڕابکێشە بۆ سوڕاندن ↻</div>
+                </div>
               </div>
               <div class="book3d-face book3d-back"></div>
-              <div class="book3d-face book3d-spine">کتێبخانەی خێزان</div>
+              <div class="book3d-face book3d-spine" data-i18n="book3dTitle">کتێبخانەی خێزان</div>
               <div class="book3d-face book3d-pages"></div>
             </div>
-            <div style="font-size:0.78rem; opacity:0.85; margin-top:0.85rem;">👆 کتێبە سێ ڕەهەندییەکە بجوڵێنە</div>
+            <div class="book3d-shadow"></div>
+            <div style="font-size:0.8rem; opacity:0.9; margin-top:0.45rem; font-weight:600;" data-i18n="book3dHint">👆 کتێبە سێ ڕەهەندییەکە بجوڵێنە</div>
           </div>
         </div>
 
         <div class="home-quick-grid">
           <button type="button" class="home-quick-card" onclick="window.app.switchView('catalog')">
             <span class="home-quick-icon">📖</span>
-            <span class="home-quick-title">کتێبەکان</span>
-            <span class="home-quick-desc">گەڕان و فلتەرکردنی هەموو کتێبەکان بەپێی پۆل و جۆر</span>
+            <span class="home-quick-title" data-i18n="qcBooksTitle">کتێبەکان</span>
+            <span class="home-quick-desc" data-i18n="qcBooksDesc">گەڕان و فلتەرکردنی هەموو کتێبەکان بەپێی پۆل و جۆر</span>
           </button>
-          <button type="button" class="home-quick-card" onclick="openModal('signin-modal')">
-            <span class="home-quick-icon">🔐</span>
-            <span class="home-quick-title">چوونەژوورەوە و ئەندامبوون</span>
-            <span class="home-quick-desc">چوونەژوورەوە یان ناردنی داواکاری بۆ جاری یەکەم</span>
+          <button type="button" class="home-quick-card" onclick="openModal('signin-modal'); if(window.setSigninMode) window.setSigninMode('request');">
+            <span class="home-quick-icon">✨</span>
+            <span class="home-quick-title" data-i18n="qcJoinTitle">ببە ئەندام</span>
+            <span class="home-quick-desc" data-i18n="qcJoinDesc">ناردنی داواکاری ئەندامبوون بۆ جاری یەکەم</span>
           </button>
           <button type="button" class="home-quick-card" onclick="if(requireLogin('تکایە سەرەتا بچۆ ژوورەوە')) window.app.switchView('inventory')">
             <span class="home-quick-icon">❤️</span>
-            <span class="home-quick-title">دڵخواز و مێژووم</span>
-            <span class="home-quick-desc">بینینی کتێبە دڵخوازەکان، لاپەڕە خوێندراوەکان و مێژوو</span>
+            <span class="home-quick-title" data-i18n="qcFavTitle">دڵخواز و مێژووم</span>
+            <span class="home-quick-desc" data-i18n="qcFavDesc">بینینی کتێبە دڵخوازەکان، لاپەڕە خوێندراوەکان و مێژوو</span>
           </button>
           <button type="button" class="home-quick-card" onclick="if(requireLogin('تکایە سەرەتا بچۆ ژوورەوە')) window.app.switchView('races')">
             <span class="home-quick-icon">🏆</span>
-            <span class="home-quick-title">پێشەنگەکان</span>
-            <span class="home-quick-desc">بینینی ڕیزبەندی خوێنەرە چالاکەکانی خێزان</span>
+            <span class="home-quick-title" data-i18n="qcRacesTitle">پێشەنگەکان</span>
+            <span class="home-quick-desc" data-i18n="qcRacesDesc">بینینی ڕیزبەندی خوێنەرە چالاکەکانی خێزان</span>
           </button>
           <button type="button" class="home-quick-card" onclick="document.getElementById('btn-open-settings')?.click()">
             <span class="home-quick-icon">⚙️</span>
-            <span class="home-quick-title">ڕێکخستنەکان</span>
-            <span class="home-quick-desc">گۆڕینی ڕەنگی باکگراوند، فۆنت و زمان</span>
+            <span class="home-quick-title" data-i18n="qcSettingsTitle">ڕێکخستنەکان</span>
+            <span class="home-quick-desc" data-i18n="qcSettingsDesc">گۆڕینی ڕەنگی باکگراوند، فۆنت و زمان</span>
           </button>
         </div>
       </div>
@@ -320,6 +324,15 @@
         <div class="section-header">
           <h2 class="section-title" data-i18n="rulesTitle">📋 ڕێنمایی بەکارهێنانی کتێبخانە و ئاستی پۆلەکان</h2>
           <p class="section-subtitle">ئەم یاسایانە دەسەڵاتی خواستنی کتێب بەپێی قۆناغ و تەمەن ڕێکدەخەن:</p>
+        </div>
+                <div id="library-guide-4-rules" style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:14px; padding:1.25rem; margin-bottom:1.5rem; box-shadow:0 2px 10px rgba(0,0,0,0.04);">
+          <h3 style="margin:0 0 0.75rem; color:var(--primary-navy); font-size:1.1rem;" data-i18n="guideNotesTitle">📌 ڕێنماییە سەرەکییەکان</h3>
+          <ol style="margin:0; padding-inline-start:1.35rem; display:flex; flex-direction:column; gap:0.55rem; font-weight:600; color:var(--text-primary);">
+            <li data-i18n="guideRule1">هەر خوێنەرێک تەنها دەتوانێت ١ کتێب لە هەفتەیەکدا بخوازێت.</li>
+            <li data-i18n="guideRule2">ناتوانیت کتێبێک بخوازیت کە خوازراو بێت یان لە ئاستی پۆلەکەی تۆ گەورەتر بێت.</li>
+            <li data-i18n="guideRule3">دەتوانیت لە ڕێگای 💡 پێشنیازی کتێبەوە داوای هەر کتێبێک بکەیت تا بخرێتە ناو ماڵپەڕەکە.</li>
+            <li data-i18n="guideRule4">پێویستە Self-Sign In بکەیت تا مافی خواستنی کتێبت هەبێت.</li>
+          </ol>
         </div>
         <div class="rules-matrix">
           <div class="rule-box">
@@ -749,16 +762,16 @@
   <div class="modal-overlay" id="modal-settings">
     <div class="modal-card" style="max-width:480px;">
       <div class="modal-header">
-        <h3>⚙️ ڕێکخستنەکان</h3>
+        <h3 data-i18n="settingsTitle">⚙️ ڕێکخستنەکان</h3>
         <button class="modal-close-btn modal-close-trigger">&times;</button>
       </div>
       <div class="modal-body">
-        <div style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">🌐 زمانی ماڵپەڕ</div>
+        <div style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;" data-i18n="settingsLang">🌐 زمانی ماڵپەڕ</div>
         <div style="display:flex; gap:0.6rem; margin-bottom:1.5rem;">
           <button type="button" class="btn btn-primary btn-sm" id="btn-set-lang-ckb" style="flex:1;">کوردی سۆرانی</button>
           <button type="button" class="btn btn-outline btn-sm" id="btn-set-lang-en" style="flex:1;">ئینگلیزی</button>
         </div>
-        <div style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">🎨 ڕەنگی باکگراوند</div>
+        <div style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;" data-i18n="settingsTheme">🎨 ڕەنگی باکگراوند</div>
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:0.6rem;">
           <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="light">کرێمی</button>
           <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="pink" style="border-color:#EC4899; color:#BE185D;">پەمەیی</button>
@@ -768,7 +781,7 @@
           <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="peach" style="border-color:#F59E0B; color:#B45309;">پرتەقاڵی</button>
           <button type="button" class="btn btn-outline btn-sm theme-option-btn" data-set-theme="dark">شەو</button>
         </div>
-        <div style="font-size:0.9rem; font-weight:700; margin:1.25rem 0 0.6rem;">✍️ شێوازی فۆنت</div>
+        <div style="font-size:0.9rem; font-weight:700; margin:1.25rem 0 0.6rem;" data-i18n="settingsFont">✍️ شێوازی فۆنت</div>
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:0.6rem;">
           <button type="button" class="btn btn-outline btn-sm font-option-btn" data-set-font="pencil" style="font-family:'Marhey','Patrick Hand',cursive;">✏️ دەستنووس</button>
           <button type="button" class="btn btn-outline btn-sm font-option-btn" data-set-font="modern" style="font-family:'Vazirmatn','Inter',sans-serif;">✨ مۆدێرن</button>
