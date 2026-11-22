@@ -1421,35 +1421,88 @@ document.getElementById('admin-edit-book-form')?.addEventListener('submit', asyn
     }
   });
 
-  // Calm ambient chord loop
-  const chords = [
-    [261.63, 329.63, 392.00], // Cmaj
-    [220.00, 261.63, 329.63], // Am
-    [174.61, 220.00, 261.63], // Fmaj
-    [196.00, 246.94, 293.66]  // Gmaj
+  // Rich 4-Layer Lo-Fi Chill Mix (Bass + Maj7/Min9 Chords + Melody + Soft Beat)
+  const progression = [
+    { bass: 130.81, chord: [261.63, 329.63, 392.00, 493.88], melody: [523.25, 659.25, 587.33, 493.88] }, // Cmaj7
+    { bass: 110.00, chord: [220.00, 261.63, 329.63, 392.00], melody: [440.00, 523.25, 659.25, 587.33] }, // Am7
+    { bass: 87.31,  chord: [174.61, 220.00, 261.63, 329.63], melody: [349.23, 440.00, 523.25, 493.88] }, // Fmaj7
+    { bass: 98.00,  chord: [196.00, 246.94, 293.66, 349.23], melody: [392.00, 493.88, 587.33, 523.25] }  // G7
   ];
-  let chordIdx = 0;
+  let stepIdx = 0;
+
+  function playNote(freq, startOffset, dur, type, vol) {
+    const ctx = getCtx();
+    if (!ctx) return;
+    const t = ctx.currentTime + startOffset;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1400, t);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(vol, t + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.05);
+  }
+
+  function playSoftKick(startOffset) {
+    const ctx = getCtx();
+    if (!ctx) return;
+    const t = ctx.currentTime + startOffset;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(115, t);
+    osc.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+    gain.gain.setValueAtTime(0.11, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.2);
+  }
+
+  function playSoftHat(startOffset) {
+    const ctx = getCtx();
+    if (!ctx) return;
+    const t = ctx.currentTime + startOffset;
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.setValueAtTime(6500, t);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.025, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+    src.connect(hp);
+    hp.connect(gain);
+    gain.connect(ctx.destination);
+    src.start(t);
+  }
 
   function playAmbientChord() {
     if (!musicPlaying) return;
-    const ctx = getCtx();
-    if (!ctx) return;
-    const notes = chords[chordIdx % chords.length];
-    chordIdx++;
-    notes.forEach((freq, i) => {
-      const t = ctx.currentTime + i * 0.14;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, t);
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.linearRampToValueAtTime(0.025, t + 0.6);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 3.1);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(t);
-      osc.stop(t + 3.2);
-    });
+    const bar = progression[stepIdx % progression.length];
+    stepIdx++;
+    // 1. Warm Bass on beats 1 and 3
+    playNote(bar.bass, 0.0, 1.4, 'triangle', 0.08);
+    playNote(bar.bass * 1.5, 1.6, 1.3, 'triangle', 0.055);
+    // 2. Lush Maj7 Pad Chords
+    bar.chord.forEach((f, i) => playNote(f, i * 0.03, 3.0, 'sine', 0.026));
+    // 3. Dreamy Melody Notes across the bar
+    bar.melody.forEach((f, i) => playNote(f, i * 0.8 + 0.2, 0.75, 'triangle', 0.032));
+    // 4. Gentle Lo-Fi Groove (kick + hi-hats)
+    [0, 1.6].forEach(t => playSoftKick(t));
+    [0.4, 0.8, 1.2, 2.0, 2.4, 2.8].forEach(t => playSoftHat(t));
   }
 
   function updateSoundButtons() {
