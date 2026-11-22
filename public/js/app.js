@@ -812,11 +812,16 @@ async function loadAdminTabContent(tab) {
         <td><strong>${escapeHtml(b.title)}</strong></td>
         <td>${escapeHtml(b.author)}</td>
         <td><span class="book-category-tag cat-badge-${b.category_code}">${escapeHtml(b.category_name_ckb)}</span></td>
-        <td><span class="book-category-tag">${formatBookType(b.book_type)}</span></td>
+        <td>
+          <select class="form-control" style="padding:0.25rem 0.5rem; font-size:0.82rem; min-width:120px;" onchange="quickChangeBookType(${b.id}, this.value)">
+            ${Object.entries(BOOK_TYPE_LABELS).map(([k, lbl]) => `<option value="${k}" ${(b.book_type || 'other') === k ? 'selected' : ''}>${lbl}</option>`).join('')}
+          </select>
+        </td>
         <td>${b.available_copies} / ${b.total_copies}</td>
         <td><strong>${b.total_loans_count || 0} کەس</strong></td>
         <td>
           <button class="btn btn-outline btn-sm" onclick="openBookDetailsModal(${b.id})">بینین</button>
+          <button class="btn btn-primary btn-sm" onclick="openEditBookModal(${b.id})">✏️ دەستکاریکردن</button>
           <button class="btn btn-danger btn-sm" onclick="permanentDeleteBook(${b.id}, '${escapeHtml(b.title)}')">سڕینەوەی هەمیشەیی</button>
         </td>
       </tr>
@@ -1281,3 +1286,88 @@ window.handleReturnWithReadCheck = async function(loanId, title) {
     showToast(e.message, 'error');
   }
 };
+
+
+window.quickChangeBookType = async function(bookId, newType) {
+  try {
+    await window.api.request(`/books/${bookId}`, { method: 'PUT', body: JSON.stringify({ bookType: newType }) });
+    showToast('جۆری کتێب نوێکرایەوە ✅', 'success');
+    loadCatalog();
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+};
+
+
+window.openEditBookModal = async function(bookId) {
+  try {
+    const res = await window.api.getBookById(bookId);
+    const b = res.book;
+    document.getElementById('edit-book-id').value = b.id;
+    document.getElementById('edit-book-title').value = b.title || '';
+    document.getElementById('edit-book-author').value = b.author || '';
+    document.getElementById('edit-book-type').value = b.book_type || 'other';
+    document.getElementById('edit-book-pages').value = b.page_count || '';
+    document.getElementById('edit-book-desc').value = b.description || '';
+
+    const catSel = document.getElementById('edit-book-category');
+    const addCatSel = document.getElementById('new-book-category');
+    if (catSel && addCatSel) {
+      catSel.innerHTML = addCatSel.innerHTML;
+      catSel.value = b.grade_category_id || '';
+    }
+    const fileInput = document.getElementById('edit-book-cover-file');
+    if (fileInput) fileInput.value = '';
+    openModal('edit-book-modal');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+};
+
+document.getElementById('admin-edit-book-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('edit-book-id').value;
+  const btn = document.getElementById('btn-save-edit-book');
+  const payload = {
+    title: document.getElementById('edit-book-title').value.trim(),
+    author: document.getElementById('edit-book-author').value.trim(),
+    bookType: document.getElementById('edit-book-type').value,
+    pageCount: document.getElementById('edit-book-pages').value ? parseInt(document.getElementById('edit-book-pages').value, 10) : null,
+    gradeCategoryId: parseInt(document.getElementById('edit-book-category').value, 10),
+    description: document.getElementById('edit-book-desc').value.trim()
+  };
+
+  const fileEl = document.getElementById('edit-book-cover-file');
+  if (fileEl && fileEl.files && fileEl.files[0]) {
+    payload.coverUrl = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxW = 800;
+          const scale = img.width > maxW ? (maxW / img.width) : 1;
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(fileEl.files[0]);
+    });
+  }
+
+  try {
+    btn.disabled = true;
+    await window.api.request(`/books/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    closeModal('edit-book-modal');
+    showToast('زانیارییەکانی کتێب نوێکرانەوە ✅', 'success');
+    loadAdminTabContent('books');
+    loadCatalog();
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+});

@@ -857,5 +857,63 @@
       </form>
     </div>
   </div>
+
+  <!-- Edit Book Modal (Admin Full Edit) -->
+  <div class="modal-overlay" id="edit-book-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ دەستکاریکردنی زانیارییەکانی کتێب</h3>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <form id="admin-edit-book-form">
+        <input type="hidden" id="edit-book-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">ناوی کتێب *</label>
+            <input type="text" id="edit-book-title" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">نووسەر یان وەرگێڕ *</label>
+            <input type="text" id="edit-book-author" class="form-control" required>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+            <div class="form-group">
+              <label class="form-label">جۆری کتێب *</label>
+              <select id="edit-book-type" class="form-control" required>
+                <option value="roman">📖 ڕۆمان</option>
+                <option value="chirok">📘 چیرۆک</option>
+                <option value="shi3r">🪶 شیعر</option>
+                <option value="wta">💬 وتە و پەند</option>
+                <option value="zanist">🔬 زانست و مێژوو</option>
+                <option value="ayini">🕌 ئایینی</option>
+                <option value="mindal">🧸 منداڵان</option>
+                <option value="other">✨ هی تر</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ژمارەی لاپەڕەکان</label>
+              <input type="number" id="edit-book-pages" class="form-control" min="1" placeholder="نموونە: ٢٤٠">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">پۆلی خوێندنەوە *</label>
+            <select id="edit-book-category" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">کورتەی بابەت</label>
+            <textarea id="edit-book-desc" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">گۆڕینی وێنەی بەرگ (ئارەزوومەندانە)</label>
+            <input type="file" id="edit-book-cover-file" accept="image/*" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-trigger">داخستن</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-edit-book">💾 پاشەکەوتکردن</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

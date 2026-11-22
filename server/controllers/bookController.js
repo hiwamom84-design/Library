@@ -440,7 +440,7 @@ async function deleteBook(req, res) {
 
 async function updateBook(req, res) {
   const { id } = req.params;
-  const { title, author, isbn, description, coverUrl, gradeCategoryId, isArchived } = req.body;
+  const { title, author, isbn, description, coverUrl, gradeCategoryId, isArchived, bookType, book_type, pageCount, page_count } = req.body;
 
   try {
     let updateFields = [];
@@ -454,6 +454,8 @@ async function updateBook(req, res) {
     if (coverUrl !== undefined) { updateFields.push(`cover_url = $${idx++}`); params.push(coverUrl ? coverUrl.trim() : null); }
     if (gradeCategoryId !== undefined) { updateFields.push(`grade_category_id = $${idx++}`); params.push(gradeCategoryId); }
     if (isArchived !== undefined) { updateFields.push(`is_archived = $${idx++}`); params.push(Boolean(isArchived)); }
+    if (bookType !== undefined || book_type !== undefined) { updateFields.push(`book_type = $${idx++}`); params.push((bookType || book_type || 'other').trim()); }
+    if (pageCount !== undefined || page_count !== undefined) { updateFields.push(`page_count = $${idx++}`); params.push(parseInt(pageCount || page_count, 10) || null); }
 
     if (updateFields.length === 0) {
       return res.status(400).json({ error: 'هیچ زانیارییەک دابین نەکراوە', errorEn: 'No update data provided.' });
