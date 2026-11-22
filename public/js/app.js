@@ -512,7 +512,7 @@ function renderBookCards(container, books) {
       permBannerHtml = `<div class="permission-banner in-hand">📖 لە لای خۆتە بۆ خوێندنەوە</div>`;
       borrowBtnHtml = `<button class="btn btn-disabled btn-sm">خوازراوە</button>`;
     } else if (book.canBorrow) {
-      permBannerHtml = `<div class="permission-banner allowed">✓ گونجاوە بۆ پۆلەکەت</div>`;
+      permBannerHtml = '';
       borrowBtnHtml = `<button class="btn btn-primary btn-sm" onclick="handleBorrowBook(${book.id}, '${escapeHtml(book.title)}')">خواستنی ئەم کتێبە</button>`;
     } else if (!hasAvailable) {
       const who = book.active_borrower_name ? ` (${escapeHtml(book.active_borrower_name)})` : '';
@@ -542,7 +542,7 @@ function renderBookCards(container, books) {
           ${coverHtml}
         </div>
         <div class="book-card-body">
-          <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.35rem;">
+          <div style="display:flex; gap:0.35rem; flex-wrap:wrap; align-items:center; margin-bottom:0.4rem;">
             <span class="book-category-tag ${catBadgeClass}">
               ${escapeHtml(categoryName)}
             </span>
@@ -550,6 +550,7 @@ function renderBookCards(container, books) {
               ${formatBookType(book.book_type)}
             </span>
             ${book.page_count ? `<span class="book-category-tag" style="background:#f3f4f6; color:#374151;">📄 ${book.page_count} لاپەڕە</span>` : ''}
+            ${book.canBorrow ? '<span class="book-category-tag" style="background:#dcfce7; color:#166534;">✓ گونجاوە بۆ پۆلەکەت</span>' : ''}
           </div>
           <h3 class="book-title">${escapeHtml(book.title)}</h3>
           <p class="book-author">${escapeHtml(book.author)}</p>
