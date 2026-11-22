@@ -40,6 +40,7 @@ async function runMigrations() {
     await client.query(schemaSql);
     await client.query("ALTER TABLE books ADD COLUMN IF NOT EXISTS page_count INTEGER DEFAULT NULL;");
     await client.query("ALTER TABLE books ADD COLUMN IF NOT EXISTS book_type VARCHAR(60) DEFAULT 'other';");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS registration_status VARCHAR(20) DEFAULT 'approved';");
 
     // Seed default grade categories if not already present
     console.log('📚 [Migrations] Verifying reading grade categories...');

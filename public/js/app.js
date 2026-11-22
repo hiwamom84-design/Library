@@ -16,7 +16,7 @@ function formatBookType(code) { return BOOK_TYPE_LABELS[code] || BOOK_TYPE_LABEL
  */
 
 const state = {
-  currentView: 'catalog',
+  currentView: 'home',
   user: window.api ? window.api.user : null,
   books: [],
   categories: [],
@@ -79,7 +79,9 @@ function initAuthListener() {
 }
 
 function initEventListeners() {
+  document.getElementById('nav-home-btn')?.addEventListener('click', () => switchView('home'));
   document.getElementById('nav-books-btn')?.addEventListener('click', () => switchView('catalog'));
+  init3DBook();
   document.getElementById('nav-races-btn')?.addEventListener('click', () => {
     if (!state.user) {
       openModal('signin-modal');
@@ -104,7 +106,7 @@ function initEventListeners() {
     switchView('admin');
   });
 
-  document.getElementById('brand-link')?.addEventListener('click', () => switchView('catalog'));
+  document.getElementById('brand-link')?.addEventListener('click', () => switchView('home'));
 
   document.getElementById('btn-open-settings')?.addEventListener('click', () => { if (!requireLogin('تکایە سەرەتا بچۆ ژوورەوە')) return; openModal('modal-settings'); });
   document.getElementById('btn-set-lang-ckb')?.addEventListener('click', () => { window.i18n.setLanguage('ckb'); renderApp(); });
@@ -202,7 +204,25 @@ function initEventListeners() {
     const password = document.getElementById('signin-password').value;
     const submitBtn = document.getElementById('signin-submit-btn');
     let loginPayload;
-    if (currentSigninMode === 'member') {
+    if (currentSigninMode === 'request') {
+      const fullName = document.getElementById('req-member-name')?.value.trim();
+      const gradeLevel = document.getElementById('req-member-grade')?.value || 1;
+      if (!fullName) { showToast('تکایە ناوی تەواوت بنووسە', 'error'); return; }
+      try {
+        submitBtn.disabled = true;
+        const r = await window.api.requestMembership({ fullName, gradeLevel, password });
+        closeModal('signin-modal');
+        document.getElementById('signin-form').reset();
+        window.setSigninMode('member');
+        showToast(r.message || 'داواکاری نێردرا ✅', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'چوونە ژوورەوە';
+      }
+      return;
+    } else if (currentSigninMode === 'member') {
       const userId = document.getElementById('signin-member-select')?.value;
       if (!userId) { showToast('تکایە ناوی خۆت هەڵبژێرە', 'error'); return; }
       loginPayload = { userId: parseInt(userId, 10), password };
@@ -335,6 +355,7 @@ function requireLogin(msg) {
 function switchView(view) {
   state.currentView = view;
   document.querySelectorAll('.nav-item-btn').forEach(btn => btn.classList.remove('active'));
+  if (view === 'home') document.getElementById('nav-home-btn')?.classList.add('active');
   if (view === 'catalog') document.getElementById('nav-books-btn')?.classList.add('active');
   if (view === 'inventory') document.getElementById('nav-inventory-btn')?.classList.add('active');
   if (view === 'races') document.getElementById('nav-races-btn')?.classList.add('active');
@@ -400,7 +421,7 @@ function renderCategoryFilterTabs() {
 
   const isEn = window.i18n.getCurrentLanguage() === 'en';
   let html = `
-    <button class="category-tab-btn ${state.selectedCategory === '' ? 'active' : ''}" data-cat="">
+    <button class="category-tab-btn btn-all-primary ${state.selectedCategory === '' ? 'active' : ''}" data-cat="">
       ${isEn ? 'All Categories' : 'هەموو پۆلەکان'}
     </button>
   `;
@@ -736,7 +757,7 @@ async function loadAdminDashboard() {
     state.adminStats = statsRes.stats;
 
     document.getElementById('stat-total-books').textContent = statsRes.stats.total_books || 0;
-    document.getElementById('stat-total-copies').textContent = statsRes.stats.total_copies || 0;
+    const elTC = document.getElementById('stat-total-copies'); if (elTC) elTC.textContent = statsRes.stats.total_copies || 0;
     document.getElementById('stat-available-copies').textContent = statsRes.stats.available_copies || 0;
     document.getElementById('stat-borrowed-copies').textContent = statsRes.stats.borrowed_copies || 0;
     document.getElementById('stat-active-members').textContent = statsRes.stats.total_profiles_count || 0;
@@ -757,7 +778,7 @@ function initAdminTabs() {
       document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      ['books', 'members', 'loans', 'suggestions'].forEach(t => {
+      ['books', 'members', 'loans', 'suggestions', 'requests'].forEach(t => {
         const p = document.getElementById(`admin-pane-${t}`);
         if (p) p.style.display = (t === tab) ? 'block' : 'none';
       });
@@ -826,6 +847,31 @@ async function loadAdminTabContent(tab) {
         </td>
       </tr>
     `).join('');
+  } else if (tab === 'requests') {
+    const tableBody = document.getElementById('admin-requests-table-body');
+    if (!tableBody) return;
+    tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">چاوەڕوانبە...</td></tr>';
+    try {
+      const r = await window.api.getPendingRequests();
+      const list = r.requests || [];
+      const cnt = document.getElementById('stat-requests-count');
+      if (cnt) cnt.textContent = list.length;
+      if (list.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:1.5rem;">هیچ داواکارییەکی نوێ نییە.</td></tr>';
+        return;
+      }
+      tableBody.innerHTML = list.map(u => `<tr>
+        <td><strong>${escapeHtml(u.full_name)}</strong></td>
+        <td>${u.gradeLabel?.ckb || ('پۆلی ' + u.grade_level)}</td>
+        <td>${new Date(u.created_at).toLocaleDateString('en-GB')}</td>
+        <td style="display:flex; gap:0.4rem;">
+          <button class="btn btn-primary btn-sm" onclick="approveMemberReq(${u.id})">✅ پەسەندکردن</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectMemberReq(${u.id})">❌ ڕەتکردنەوە</button>
+        </td>
+      </tr>`).join('');
+    } catch (e) {
+      tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">هەڵە لە هێنانی داواکارییەکان</td></tr>';
+    }
   } else if (tab === 'loans') {
     const tableBody = document.getElementById('admin-loans-table-body');
     if (!tableBody) return;
@@ -1059,14 +1105,18 @@ window.setSigninMode = function(mode) {
   currentSigninMode = mode;
   const mBtn = document.getElementById('btn-signin-mode-member');
   const aBtn = document.getElementById('btn-signin-mode-admin');
+  const rBtn = document.getElementById('btn-signin-mode-request');
   const mGrp = document.getElementById('signin-member-group');
   const eGrp = document.getElementById('signin-email-group');
-  if (mBtn && aBtn) {
-    mBtn.className = mode === 'member' ? 'btn btn-navy btn-sm' : 'btn btn-outline btn-sm';
-    aBtn.className = mode === 'admin' ? 'btn btn-navy btn-sm' : 'btn btn-outline btn-sm';
-  }
+  const rGrp = document.getElementById('signin-request-group');
+  const subBtn = document.getElementById('signin-submit-btn');
+  if (mBtn) mBtn.className = mode === 'member' ? 'btn btn-navy btn-sm' : 'btn btn-outline btn-sm';
+  if (aBtn) aBtn.className = mode === 'admin' ? 'btn btn-navy btn-sm' : 'btn btn-outline btn-sm';
+  if (rBtn) rBtn.className = mode === 'request' ? 'btn btn-navy btn-sm' : 'btn btn-outline btn-sm';
   if (mGrp) mGrp.style.display = mode === 'member' ? 'block' : 'none';
   if (eGrp) eGrp.style.display = mode === 'admin' ? 'block' : 'none';
+  if (rGrp) rGrp.style.display = mode === 'request' ? 'block' : 'none';
+  if (subBtn) subBtn.textContent = mode === 'request' ? 'ناردنی داواکاری' : 'چوونە ژوورەوە';
 };
 
 window.setRaceTab = function(tab, btn) {
@@ -1176,3 +1226,40 @@ window.deleteSuggestion = function(id) {
   localStorage.setItem('family_lib_suggestions', JSON.stringify(list));
   renderAdminSuggestions();
 };
+
+
+window.approveMemberReq = async function(id) {
+  try {
+    const r = await window.api.approveMemberRequest(id);
+    showToast(r.message, 'success');
+    loadAdminTabContent('requests');
+    loadPublicMembersDropdown();
+  } catch (e) { showToast(e.message, 'error'); }
+};
+
+window.rejectMemberReq = async function(id) {
+  try {
+    const r = await window.api.rejectMemberRequest(id);
+    showToast(r.message, 'info');
+    loadAdminTabContent('requests');
+  } catch (e) { showToast(e.message, 'error'); }
+};
+
+function init3DBook() {
+  const stage = document.getElementById('book3d-stage');
+  const book = document.getElementById('book3d-el');
+  if (!stage || !book) return;
+  let rotX = 12, rotY = -24, dragging = false, sx = 0, sy = 0;
+  const update = () => { book.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; };
+  stage.addEventListener('pointerdown', (e) => { dragging = true; sx = e.clientX; sy = e.clientY; stage.setPointerCapture(e.pointerId); });
+  stage.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    rotY += (e.clientX - sx) * 0.6;
+    rotX -= (e.clientY - sy) * 0.6;
+    rotX = Math.max(-55, Math.min(55, rotX));
+    sx = e.clientX; sy = e.clientY;
+    update();
+  });
+  stage.addEventListener('pointerup', () => { dragging = false; });
+  stage.addEventListener('pointercancel', () => { dragging = false; });
+}

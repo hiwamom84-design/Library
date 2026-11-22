@@ -79,6 +79,12 @@ class ApiClient {
     window.dispatchEvent(new CustomEvent('auth-changed', { detail: { user: null } }));
   }
 
+  async requestMembership(data) {
+    return this.request('/auth/register-request', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async getPendingRequests() { return this.request('/admin/requests'); }
+  async approveMemberRequest(id) { return this.request(`/admin/requests/${id}/approve`, { method: 'POST' }); }
+  async rejectMemberRequest(id) { return this.request(`/admin/requests/${id}`, { method: 'DELETE' }); }
   async getPublicMembers() {
     return this.request('/auth/members');
   }

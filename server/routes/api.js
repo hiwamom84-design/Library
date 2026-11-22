@@ -40,6 +40,7 @@ router.get('/leaderboard', bookController.getLeaderboard);
 // 3. Authentication & Member Profile
 router.get('/auth/members', authController.getPublicMembers);
 router.post('/auth/login', authController.login);
+router.post('/auth/register-request', authController.requestMembership);
 router.get('/auth/me', authenticateToken, authController.getMe);
 router.put('/auth/profile', authenticateToken, authController.updateMe);
 router.post('/auth/members', authenticateToken, requireAdmin, authController.registerMember);
@@ -66,5 +67,8 @@ router.get('/admin/dashboard', authenticateToken, requireAdmin, adminController.
 router.get('/admin/members', authenticateToken, requireAdmin, adminController.getMembers);
 router.put('/admin/members/:id', authenticateToken, requireAdmin, adminController.updateMember);
 router.delete('/admin/members/:id', authenticateToken, requireAdmin, adminController.deleteMember);
+router.get('/admin/requests', authenticateToken, requireAdmin, adminController.getPendingRequests);
+router.post('/admin/requests/:id/approve', authenticateToken, requireAdmin, adminController.approveMemberRequest);
+router.delete('/admin/requests/:id', authenticateToken, requireAdmin, adminController.rejectMemberRequest);
 
 module.exports = router;

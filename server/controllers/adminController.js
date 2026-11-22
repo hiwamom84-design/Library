@@ -296,10 +296,53 @@ async function getCategories(req, res) {
   }
 }
 
+
+async function getPendingRequests(req, res) {
+  try {
+    const result = await query(
+      `SELECT id, full_name, grade_level, created_at
+       FROM users
+       WHERE registration_status = 'pending'
+       ORDER BY created_at DESC`
+    );
+    return res.json({ requests: result.rows.map(r => ({ ...r, gradeLabel: formatGradeLabel(r.grade_level) })) });
+  } catch (err) {
+    return res.status(500).json({ error: 'هەڵە لە هێنانی داواکارییەکان' });
+  }
+}
+
+async function approveMemberRequest(req, res) {
+  const { id } = req.params;
+  try {
+    const r = await query(
+      `UPDATE users SET is_active = true, registration_status = 'approved', updated_at = NOW()
+       WHERE id = $1 RETURNING id, full_name`,
+      [id]
+    );
+    if (r.rows.length === 0) return res.status(404).json({ error: 'داواکاری نەدۆزرایەوە' });
+    return res.json({ message: `ئەندام «${r.rows[0].full_name}» پەسەند کرا ✅` });
+  } catch (err) {
+    return res.status(500).json({ error: 'هەڵە لە پەسەندکردن' });
+  }
+}
+
+async function rejectMemberRequest(req, res) {
+  const { id } = req.params;
+  try {
+    await query(`DELETE FROM users WHERE id = $1 AND registration_status = 'pending'`, [id]);
+    return res.json({ message: 'داواکاری ڕەتکرایەوە و سڕایەوە' });
+  } catch (err) {
+    return res.status(500).json({ error: 'هەڵە لە ڕەتکردنەوە' });
+  }
+}
+
 module.exports = {
   getDashboardStats,
   getMembers,
   updateMember,
   deleteMember,
-  getCategories
+  getCategories,
+  getPendingRequests,
+  approveMemberRequest,
+  rejectMemberRequest
 };

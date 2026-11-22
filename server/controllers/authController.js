@@ -12,14 +12,14 @@ const { getAllowedCategoryCodes, formatGradeLabel } = require('../utils/grade-ru
 async function getPublicMembers(req, res) {
   try {
     const result = await query(
-      `SELECT id, full_name, grade_level FROM users WHERE is_active = true AND role = 'member' ORDER BY grade_level DESC, id ASC`
+      `SELECT id, full_name, grade_level FROM users WHERE is_active = true AND role = 'member' AND COALESCE(registration_status, 'approved') = 'approved' ORDER BY grade_level DESC, id ASC`
     );
     if (result.rows.length === 0) {
       const { setupAdmin, setupFamilyMembers } = require('../scripts/setup-admin');
       await setupAdmin();
       await setupFamilyMembers();
       const retry = await query(
-        "SELECT id, full_name, grade_level FROM users WHERE is_active = true AND role = 'member' ORDER BY grade_level DESC, id ASC"
+        "SELECT id, full_name, grade_level FROM users WHERE is_active = true AND role = 'member' AND COALESCE(registration_status, 'approved') = 'approved' ORDER BY grade_level DESC, id ASC"
       );
       return res.status(200).json({ members: retry.rows });
     }
@@ -33,7 +33,7 @@ async function getPublicMembers(req, res) {
         await setupAdmin();
         await setupFamilyMembers();
         const retry = await query(
-          `SELECT id, full_name, grade_level FROM users WHERE is_active = true AND role = 'member' ORDER BY grade_level DESC, id ASC`
+          `SELECT id, full_name, grade_level FROM users WHERE is_active = true AND role = 'member' AND COALESCE(registration_status, 'approved') = 'approved' ORDER BY grade_level DESC, id ASC`
         );
         return res.status(200).json({ members: retry.rows });
       } catch (migErr) {
@@ -59,7 +59,7 @@ async function login(req, res) {
     let userRes;
     if (userId) {
       userRes = await query(
-        `SELECT id, email, password_hash, full_name, role, grade_level, photo_url, phone, is_active 
+        `SELECT id, email, password_hash, full_name, role, grade_level, photo_url, phone, is_active, COALESCE(registration_status, 'approved') as registration_status 
          FROM users WHERE id = $1`,
         [parseInt(userId, 10)]
       );
@@ -70,7 +70,7 @@ async function login(req, res) {
       }
       const cleanName = adminName.trim();
       userRes = await query(
-        `SELECT id, email, password_hash, full_name, role, grade_level, photo_url, phone, is_active 
+        `SELECT id, email, password_hash, full_name, role, grade_level, photo_url, phone, is_active, COALESCE(registration_status, 'approved') as registration_status 
          FROM users WHERE role = 'admin' AND LOWER(full_name) = LOWER($1)`,
         [cleanName]
       );
@@ -87,7 +87,7 @@ async function login(req, res) {
       }
     } else {
       userRes = await query(
-        `SELECT id, email, password_hash, full_name, role, grade_level, photo_url, phone, is_active 
+        `SELECT id, email, password_hash, full_name, role, grade_level, photo_url, phone, is_active, COALESCE(registration_status, 'approved') as registration_status 
          FROM users WHERE LOWER(email) = LOWER($1)`,
         [email.trim()]
       );
@@ -101,6 +101,13 @@ async function login(req, res) {
     }
 
     const user = userRes.rows[0];
+
+    if (user.registration_status === 'pending') {
+      return res.status(403).json({
+        error: 'داواکارییەکەت لە چاوەڕوانی پەسەندکردنی بەڕێوەبەردایە ⏳',
+        errorEn: 'Your membership request is pending admin approval.'
+      });
+    }
 
     if (!user.is_active) {
       return res.status(403).json({
@@ -341,10 +348,40 @@ async function updateMe(req, res) {
   }
 }
 
+
+async function requestMembership(req, res) {
+  const { fullName, password, gradeLevel } = req.body;
+  if (!fullName || !password || password.length < 4) {
+    return res.status(400).json({ error: 'تکایە ناو و تێپەڕەوشە (لانیکەم ٤ پیت/ژمارە) بنووسە' });
+  }
+  const cleanName = fullName.trim();
+  const parsedGrade = parseInt(gradeLevel, 10) || 1;
+  const genEmail = `member_${Date.now()}_${Math.floor(Math.random()*1000)}@family.krd`;
+  try {
+    const existing = await query('SELECT id FROM users WHERE LOWER(full_name) = LOWER($1)', [cleanName]);
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ error: 'ئەم ناوە پێشتر تۆمار کراوە یان داواکاری ناردووە' });
+    }
+    const passwordHash = await hashPassword(password);
+    await query(
+      `INSERT INTO users (email, password_hash, full_name, role, grade_level, is_active, registration_status)
+       VALUES ($1, $2, $3, 'member', $4, false, 'pending')`,
+      [genEmail, passwordHash, cleanName, Math.min(13, Math.max(1, parsedGrade))]
+    );
+    return res.status(201).json({
+      message: 'داواکاری ئەندامبوون نێردرا! دوای پەسەندکردنی بەڕێوەبەر دەتوانیت بچیتە ژوورەوە ✅'
+    });
+  } catch (err) {
+    console.error('requestMembership error:', err.message);
+    return res.status(500).json({ error: 'هەڵەیەک لە ناردنی داواکاری ڕوویدا' });
+  }
+}
+
 module.exports = {
   getPublicMembers,
   login,
   registerMember,
   getMe,
-  updateMe
+  updateMe,
+  requestMembership
 };
