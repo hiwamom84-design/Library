@@ -12,7 +12,7 @@ const GRADE_CATEGORIES = [
   { code: 'G4_6', name_ckb: 'ئاستی پۆلی 4-6', name_en: 'Level of Grade 4-6', min_grade: 4, max_grade: 6, sort: 2 },
   { code: 'G7_9', name_ckb: 'ئاستی پۆلی 7-9', name_en: 'Level of Grade 7-9', min_grade: 7, max_grade: 9, sort: 3 },
   { code: 'G10_12', name_ckb: 'ئاستی پۆلی 10-12', name_en: 'Level of Grade 10-12', min_grade: 10, max_grade: 12, sort: 4 },
-  { code: 'ABOVE_12', name_ckb: 'ئاستی سەروو پۆلی 12', name_en: 'Level Above Grade 12', min_grade: 13, max_grade: 99, sort: 5 }
+  { code: 'ABOVE_12', name_ckb: 'گەورەساڵان', name_en: 'Adults (18+)', min_grade: 13, max_grade: 99, sort: 5 }
 ];
 
 async function seedDatabase() {

@@ -13,7 +13,7 @@ const INITIAL_CATEGORIES = [
   { code: 'G4_6', name_ckb: 'ئاستی پۆلی 4-6', name_en: 'Level of Grade 4-6', min: 4, max: 6, sort: 2 },
   { code: 'G7_9', name_ckb: 'ئاستی پۆلی 7-9', name_en: 'Level of Grade 7-9', min: 7, max: 9, sort: 3 },
   { code: 'G10_12', name_ckb: 'ئاستی پۆلی 10-12', name_en: 'Level of Grade 10-12', min: 10, max: 12, sort: 4 },
-  { code: 'ABOVE_12', name_ckb: 'ئاستی سەروو پۆلی 12', name_en: 'Level Above Grade 12', min: 13, max: 99, sort: 5 }
+  { code: 'ABOVE_12', name_ckb: 'گەورەساڵان', name_en: 'Adults (18+)', min: 13, max: 99, sort: 5 }
 ];
 
 async function runMigrations() {
