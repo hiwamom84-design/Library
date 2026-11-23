@@ -1422,34 +1422,58 @@ document.getElementById('admin-edit-book-form')?.addEventListener('submit', asyn
     }
   });
 
-  // Rich 4-Layer Lo-Fi Chill Mix (Bass + Maj7/Min9 Chords + Melody + Soft Beat)
+  // Studio Warm Piano + Lush Pad + Deep Sub-Bass + Soft Groove Mix
   const progression = [
-    { bass: 130.81, chord: [261.63, 329.63, 392.00, 493.88], melody: [523.25, 659.25, 587.33, 493.88] }, // Cmaj7
-    { bass: 110.00, chord: [220.00, 261.63, 329.63, 392.00], melody: [440.00, 523.25, 659.25, 587.33] }, // Am7
-    { bass: 87.31,  chord: [174.61, 220.00, 261.63, 329.63], melody: [349.23, 440.00, 523.25, 493.88] }, // Fmaj7
-    { bass: 98.00,  chord: [196.00, 246.94, 293.66, 349.23], melody: [392.00, 493.88, 587.33, 523.25] }  // G7
+    { bass: 130.81, chord: [261.63, 329.63, 392.00, 493.88, 587.33], arp: [523.25, 659.25, 783.99, 659.25, 587.33, 493.88] }, // Cmaj9
+    { bass: 110.00, chord: [220.00, 261.63, 329.63, 392.00, 493.88], arp: [440.00, 523.25, 659.25, 783.99, 659.25, 523.25] }, // Am9
+    { bass: 87.31,  chord: [174.61, 220.00, 261.63, 329.63, 392.00], arp: [349.23, 440.00, 523.25, 659.25, 523.25, 440.00] }, // Fmaj9
+    { bass: 98.00,  chord: [196.00, 246.94, 293.66, 349.23, 440.00], arp: [392.00, 493.88, 587.33, 659.25, 587.33, 493.88] }  // G6/9
   ];
   let stepIdx = 0;
 
-  function playNote(freq, startOffset, dur, type, vol) {
+  function playPianoKey(freq, startOffset, dur, vol = 0.042) {
+    const ctx = getCtx();
+    if (!ctx) return;
+    const t = ctx.currentTime + startOffset;
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+    osc1.type = 'triangle';
+    osc2.type = 'sine';
+    osc1.frequency.setValueAtTime(freq, t);
+    osc2.frequency.setValueAtTime(freq * 2, t);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(2200, t);
+    filter.frequency.exponentialRampToValueAtTime(650, t + dur);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(vol, t + 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    const g2 = ctx.createGain(); g2.gain.value = 0.25;
+    osc1.connect(filter);
+    osc2.connect(g2); g2.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    osc1.start(t); osc2.start(t);
+    osc1.stop(t + dur + 0.05); osc2.stop(t + dur + 0.05);
+  }
+
+  function playWarmPad(freq, startOffset, dur, vol = 0.018) {
     const ctx = getCtx();
     if (!ctx) return;
     const t = ctx.currentTime + startOffset;
     const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
     const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(1400, t);
-    osc.type = type;
+    const gain = ctx.createGain();
+    osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, t);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(950, t);
     gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.linearRampToValueAtTime(vol, t + 0.04);
+    gain.gain.linearRampToValueAtTime(vol, t + 0.85);
     gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + dur + 0.05);
+    osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    osc.start(t); osc.stop(t + dur + 0.08);
   }
 
   function playSoftKick(startOffset) {
@@ -1459,34 +1483,27 @@ document.getElementById('admin-edit-book-form')?.addEventListener('submit', asyn
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(115, t);
-    osc.frequency.exponentialRampToValueAtTime(42, t + 0.14);
-    gain.gain.setValueAtTime(0.11, t);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + 0.2);
+    osc.frequency.setValueAtTime(98, t);
+    osc.frequency.exponentialRampToValueAtTime(38, t + 0.16);
+    gain.gain.setValueAtTime(0.09, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(t); osc.stop(t + 0.22);
   }
 
-  function playSoftHat(startOffset) {
+  function playBrush(startOffset) {
     const ctx = getCtx();
     if (!ctx) return;
     const t = ctx.currentTime + startOffset;
-    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    const hp = ctx.createBiquadFilter();
-    hp.type = 'highpass';
-    hp.frequency.setValueAtTime(6500, t);
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.setValueAtTime(5200, t);
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.025, t);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
-    src.connect(hp);
-    hp.connect(gain);
-    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.016, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.038);
+    src.connect(bp); bp.connect(gain); gain.connect(ctx.destination);
     src.start(t);
   }
 
@@ -1494,16 +1511,15 @@ document.getElementById('admin-edit-book-form')?.addEventListener('submit', asyn
     if (!musicPlaying) return;
     const bar = progression[stepIdx % progression.length];
     stepIdx++;
-    // 1. Warm Bass on beats 1 and 3
-    playNote(bar.bass, 0.0, 1.4, 'triangle', 0.08);
-    playNote(bar.bass * 1.5, 1.6, 1.3, 'triangle', 0.055);
-    // 2. Lush Maj7 Pad Chords
-    bar.chord.forEach((f, i) => playNote(f, i * 0.03, 3.0, 'sine', 0.026));
-    // 3. Dreamy Melody Notes across the bar
-    bar.melody.forEach((f, i) => playNote(f, i * 0.8 + 0.2, 0.75, 'triangle', 0.032));
-    // 4. Gentle Lo-Fi Groove (kick + hi-hats)
-    [0, 1.6].forEach(t => playSoftKick(t));
-    [0.4, 0.8, 1.2, 2.0, 2.4, 2.8].forEach(t => playSoftHat(t));
+    // Deep warm bass
+    playWarmPad(bar.bass, 0, 3.1, 0.065);
+    // Velvet Maj9/Min9 pad
+    bar.chord.forEach((f, i) => playWarmPad(f, i * 0.05, 3.1, 0.016));
+    // Expressive gentle piano arpeggio
+    bar.arp.forEach((f, i) => playPianoKey(f, i * 0.5 + 0.12, 1.35, 0.038));
+    // Subtle groove
+    [0, 1.5].forEach(t => playSoftKick(t));
+    [0.5, 1.0, 2.0, 2.5].forEach(t => playBrush(t));
   }
 
   function updateSoundButtons() {
